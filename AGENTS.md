@@ -233,21 +233,10 @@ Example:
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
-
   --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 12px rgb(0 0 0 / 0.08);
 }
 ```
-
-Guidelines:
-
-- Prefer semantic names such as `--color-primary`, not `--green-700` when the value represents a design role.
-- Do not repeat the same color, spacing, radius, or shadow value across many files when it is a design token.
-- Component-specific variables are acceptable when they are private to the component and have a clear purpose.
-- Do not create hundreds of variables for values that are used only once.
-- Keep dark-mode/theme variables centralized.
-
-### CSS Modules
 
 Use a local `*.module.css` file for component and feature styling unless inline styles are specifically appropriate.
 
@@ -259,6 +248,41 @@ Avoid:
 - styling based on DOM structure when a class can express the intent more clearly.
 
 Prefer mobile-first CSS and progressive enhancement with media queries.
+
+### Responsive CSS structure
+
+Use a mobile-first approach in every `*.module.css` file.
+
+The standard Padeliza breakpoints are:
+
+- Mobile: default
+- Large phones / small tablets: `36rem` (576px)
+- Tablets: `48rem` (768px)
+- Laptops: `64rem` (1024px)
+- Large desktops: `80rem` (1280px)
+- Wide screens: `96rem` (1536px)
+
+Example:
+
+```css
+.component {
+  /* Mobile styles */
+}
+
+/* Large phones / small tablets (576px) */
+@media (min-width: 36rem) {
+  .component {
+    /* Only include styles that change at this breakpoint */
+  }
+}
+
+/* Tablets (768px) */
+@media (min-width: 48rem) {
+  .component {
+    /* Only include styles that change at this breakpoint */
+  }
+}
+```
 
 ## 10. Responsive design
 
@@ -499,3 +523,11 @@ When implementing a request:
 5. Keep framework-specific behavior aligned with the installed Next.js and React versions.
 6. Measure before making performance-sensitive changes when practical.
 7. Do not add unrelated improvements unless they are necessary for the requested change or prevent a clear regression.
+
+## 26. Git Commit Convention
+
+All commits created by the agent must follow this format:
+
+```text
+<type>: <description>
+```
