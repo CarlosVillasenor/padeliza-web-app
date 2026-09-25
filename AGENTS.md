@@ -530,4 +530,45 @@ All commits created by the agent must follow this format:
 
 ```text
 <type>: <description>
+
+Use only the following commit types:
+
+Type	Purpose	Example
+feat	New feature	feat: add project filtering
+fix	Bug fix	fix: fix mobile navigation
+refactor	Code restructuring	refactor: simplify project data
+style	Styling/formatting	style: update button styles
+docs	Documentation	docs: update README
+test	Tests	test: add project card tests
+chore	Maintenance	chore: update dependencies
+perf	Performance improvements	perf: optimize image loading
+build	Build system changes	build: update Vite configuration
+ci	CI/CD changes	ci: update GitHub Actions workflow
+
+# Commit Message Rules
+
+The commit message must use exactly one of the allowed types.
+The type must always be lowercase.
+Separate the type and description with : .
+Keep the description concise, specific, and meaningful.
+Use imperative wording.
+Do not end the description with a period.
+Do not use vague messages such as update code, fix stuff, changes, or work.
+Describe the purpose of the change, not the files that were modified.
+Keep each commit focused on one logical change.
+Do not include unrelated changes in the same commit.
+Do not create empty commits.
+
+feat: add tournament creation flow
+fix: prevent duplicate players
+refactor: simplify tournament state management
+style: improve tournament card spacing
+docs: document tournament setup
+test: add tournament validation tests
+chore: update project dependencies
+perf: reduce tournament list re-renders
+build: update Next.js configuration
+ci: update GitHub Actions workflow
+
+Before committing, review the staged changes and run the appropriate project validation commands.
 ```
