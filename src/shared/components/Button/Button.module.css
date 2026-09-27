@@ -25,7 +25,10 @@
 	outline-offset: 4px;
 }
 
-.plus {
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	font-size: 2.2rem;
 	font-weight: 300;
 	line-height: 0.8;

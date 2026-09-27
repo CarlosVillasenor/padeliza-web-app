@@ -26,9 +26,7 @@ export default function Home() {
               className={styles.iconButton}
               type="button"
               aria-label="Ver torneos"
-            >
-
-            </button>
+            ></button>
             <button
               className={styles.iconButton}
               type="button"
@@ -64,8 +62,7 @@ export default function Home() {
               </p>
             </div>
           </div>
-
-          <Button />
+          <Button icon={<span aria-hidden="true">+</span>}>Crear torneo</Button>
         </div>
       </section>
     </main>
