@@ -46,7 +46,6 @@ export default function Home() {
           <h1 className={styles.title} id="tournaments-title">
             Torneos
           </h1>
-
           <div className={styles.emptyState}>
             <Image
               className={styles.illustration}
