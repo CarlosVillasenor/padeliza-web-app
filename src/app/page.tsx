@@ -62,7 +62,10 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <Button icon={<span aria-hidden="true">+</span>}>Crear torneo</Button>
+          <Button>
+            <span aria-hidden="true">+</span>
+            Crear torneo
+          </Button>
         </div>
       </section>
     </main>

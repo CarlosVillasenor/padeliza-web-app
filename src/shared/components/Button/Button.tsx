@@ -1,15 +1,11 @@
-import type { ComponentPropsWithoutRef, ReactNode } from "react";
+import type { ComponentPropsWithoutRef } from "react";
 import styles from "./Button.module.css";
 
-type ButtonProps = Omit<ComponentPropsWithoutRef<"button">, "children"> & {
-  children: ReactNode;
-  icon?: ReactNode;
-};
+type ButtonProps = ComponentPropsWithoutRef<"button">;
 
 export default function Button({
   children,
   className,
-  icon,
   type = "button",
   ...props
 }: ButtonProps) {
@@ -19,7 +15,6 @@ export default function Button({
       type={type}
       {...props}
     >
-      {icon && <span className={styles.icon}>{icon}</span>}
       {children}
     </button>
   );
