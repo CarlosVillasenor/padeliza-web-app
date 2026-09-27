@@ -1,0 +1,32 @@
+.button {
+	display: flex;
+	width: min(100%, 21.75rem);
+	min-height: 4.7rem;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+	border: 0;
+	border-radius: 1.35rem;
+	background: #006356;
+	color: #fff;
+	font: inherit;
+	font-size: 1.45rem;
+	font-weight: 600;
+	cursor: pointer;
+	box-shadow: 0 0.6rem 1.1rem rgb(0 99 86 / 16%);
+}
+
+.button:hover {
+	background: #005449;
+}
+
+.button:focus-visible {
+	outline: 3px solid #9ee821;
+	outline-offset: 4px;
+}
+
+.plus {
+	font-size: 2.2rem;
+	font-weight: 300;
+	line-height: 0.8;
+}

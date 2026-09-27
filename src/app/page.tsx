@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import Button from "../shared/components/Button/Button";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -64,12 +65,7 @@ export default function Home() {
             </div>
           </div>
 
-          <button className={styles.createButton} type="button">
-            <span className={styles.plus} aria-hidden="true">
-              +
-            </span>
-            <span>Crear torneo</span>
-          </button>
+          <Button />
         </div>
       </section>
     </main>

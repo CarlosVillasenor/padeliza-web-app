@@ -84,10 +84,7 @@
 .copy { text-align: center; }
 .copy h2 { margin: 0; color: #0c1827; font-size: clamp(1.7rem, 6vw, 2rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.04em; }
 .copy p { margin: 0.85rem 0 0; color: #617182; font-size: clamp(1.2rem, 4.8vw, 1.5rem); line-height: 1.25; }
-.createButton { display: flex; width: min(100%, 21.75rem); min-height: 4.7rem; align-items: center; justify-content: center; gap: 1rem; border: 0; border-radius: 1.35rem; background: #006356; color: #fff; font: inherit; font-size: 1.45rem; font-weight: 600; cursor: pointer; box-shadow: 0 0.6rem 1.1rem rgb(0 99 86 / 16%); }
-.createButton:hover { background: #005449; }
-.createButton:focus-visible, .iconButton:focus-visible, .brand:focus-visible { outline: 3px solid #9ee821; outline-offset: 4px; }
-.plus { font-size: 2.2rem; font-weight: 300; line-height: 0.8; }
+.iconButton:focus-visible, .brand:focus-visible { outline: 3px solid #9ee821; outline-offset: 4px; }
 
 @media (min-width: 36rem) {
 	.page { padding: 1.25rem; }
