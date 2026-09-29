@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import Button from "../shared/components/Button/Button";
+import TournamentList from "@/features/tournaments/components/TournamentList";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -45,27 +45,27 @@ export default function Home() {
           <h1 className={styles.title} id="tournaments-title">
             Torneos
           </h1>
-          <div className={styles.emptyState}>
-            <Image
-              className={styles.illustration}
-              src="/images/illustrations/empty-tournaments.png"
-              alt="Raqueta y pelota de pádel"
-              width={1521}
-              height={1034}
-              loading="eager"
-            />
-            <div className={styles.copy}>
-              <h2>No hay torneos</h2>
-              <p>
-                Crea tu primer torneo para
-                <br /> empezar
-              </p>
-            </div>
-          </div>
-          <Button>
-            <span aria-hidden="true">+</span>
-            Crear torneo
-          </Button>
+          <TournamentList
+            emptyState={
+              <div className={styles.emptyState}>
+                <Image
+                  className={styles.illustration}
+                  src="/images/illustrations/empty-tournaments.png"
+                  alt="Raqueta y pelota de pádel"
+                  width={1521}
+                  height={1034}
+                  loading="eager"
+                />
+                <div className={styles.copy}>
+                  <h2>No hay torneos</h2>
+                  <p>
+                    Crea tu primer torneo para
+                    <br /> empezar
+                  </p>
+                </div>
+              </div>
+            }
+          />
         </div>
       </section>
     </main>

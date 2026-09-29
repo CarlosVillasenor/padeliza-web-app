@@ -37,3 +37,56 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Creación de torneos (primera versión)
+
+Abre `/torneos/nuevo` o pulsa **Crear torneo** en el inicio. El formulario mantiene
+el borrador al volver entre pasos; salir o recargar descarta ese borrador. Al
+confirmar, guarda un torneo en estado `scheduled` y vuelve al listado. La captura
+de resultados y la generación de emparejamientos quedan para la siguiente entrega.
+
+- Americano: 4, 8, 12 o 16 jugadores; de 1 a N/4 pistas. Una rotación contiene N/4
+  partidos y cada jugador tendrá N−1 parejas distintas. Para calcular los turnos,
+  se completa cada rotación en lotes de hasta C pistas antes de pasar a la siguiente:
+  `(N−1) × ceil((N/4)/C)`. No se promete el calendario más corto posible; por ejemplo,
+  12 jugadores y 2 pistas dan 22 turnos, con el último lote de cada rotación parcial.
+  El futuro generador de partidos deberá respetar esta política.
+- Mexicano: cuatro jugadores por pista, entre 1 y 4 pistas. Rondas elegidas por el
+  organizador (1–100). La futura generación usará una primera ronda aleatoria y
+  después clasificación en grupos de cuatro (1+4 contra 2+3). Los desempates de
+  clasificación deberán acordarse al implementar resultados.
+- Puntuación: suma fija por partido, entre 1 y 100, incluidos empates cuando proceda.
+  Las opciones son 8, 16, 24 y 32. Los puntos no determinan las rondas.
+
+### Dónde trabajar
+
+- `src/features/tournaments/components/TournamentWizard.tsx`: borrador y pasos.
+- `src/features/tournaments/lib/rules.ts`: reglas y validación del dominio.
+- `src/features/tournaments/components/TournamentProvider.tsx`: Context + reducer,
+  montado en el layout común. Expone `useTournaments()`.
+- `src/features/tournaments/lib/storage.ts`: almacenamiento versionado y validación
+  de datos externos. Clave: `padeliza.tournaments.v1`.
+
+Los torneos se guardan únicamente en localStorage, sin API ni base de datos remota.
+La escritura sucede antes de confirmar el éxito. Si falla, el formulario permanece;
+si los datos guardados están dañados o usan otra versión, no se sobrescriben.
+Las pestañas reciben cambios mediante el evento `storage`; escrituras simultáneas
+no son transaccionales. No hay sincronización entre dispositivos, copia de seguridad
+ni garantía de conservar los datos si el navegador los borra. Esta persistencia no
+implica que el sitio completo funcione sin conexión.
+
+### Verificación
+
+Con Node 26 (`nvm use`):
+
+```bash
+node --test src/features/tournaments/lib/rules.test.ts
+npm run lint
+npm run build
+```
+
+Prueba manual: crear un Americano de cuatro jugadores, retroceder entre pasos,
+confirmar tres rondas, crear y recargar el listado. Repetir con Mexicano, verificando
+cuatro jugadores por pista y número de rondas editable. Comprobar nombres duplicados,
+valores vacíos y puntuaciones inválidas. Si el almacenamiento está bloqueado o lleno,
+no debe aparecer una confirmación de guardado ni perderse lo escrito.
