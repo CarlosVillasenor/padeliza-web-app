@@ -65,8 +65,6 @@ export const es = {
         `${points} puntos totales por partido`,
       viewPlayers: "Ver jugadores",
       create: "+ Crear torneo",
-      storageNotice:
-        "Guardado solo en este navegador. Borrar los datos del sitio elimina los torneos.",
     },
     wizard: {
       title: "Nuevo torneo",

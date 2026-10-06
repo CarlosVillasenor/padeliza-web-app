@@ -49,9 +49,6 @@ export default function TournamentList({
       <Link className={styles.createLink} href="/tournaments/new">
         {copy.create}
       </Link>
-      <p style={{ marginTop: "1rem", fontSize: ".85rem", textAlign: "center" }}>
-        {copy.storageNotice}
-      </p>
     </>
   );
 }
