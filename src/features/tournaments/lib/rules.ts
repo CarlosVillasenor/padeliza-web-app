@@ -1,7 +1,9 @@
 import type {
+  Tournament,
   TournamentInput,
   TournamentValidationError,
 } from "../types/tournament.ts";
+import { isMatchComplete, isValidScore } from "./scoring.ts";
 
 export const tournamentFormats = ["americano", "mexicano"] as const;
 export const playerCounts = [4, 8, 12, 16];
@@ -46,4 +48,45 @@ export function validateTournament(
   )
     return "roundsMismatch";
   return null;
+}
+
+// Checks the stored schedule and status against the tournament configuration.
+export function isValidSchedule(tournament: Tournament): boolean {
+  const { schedule, players, courts, points, rounds, format, status } =
+    tournament;
+  if (!["scheduled", "in-progress", "completed"].includes(status)) return false;
+  if (!Array.isArray(schedule) || schedule.length < 1) return false;
+  if (format === "americano" ? schedule.length !== rounds : schedule.length > rounds)
+    return false;
+  const ids = new Set(players.map((p) => p.id));
+  const matchIds = new Set<string>();
+  const complete = schedule.every((round, index) => {
+    if (round.number !== index + 1 || !Array.isArray(round.matches)) return false;
+    if (round.matches.length < 1 || round.matches.length > courts) return false;
+    const inRound = new Set<string>();
+    return round.matches.every((match) => {
+      const team = [...match.teamA, ...match.teamB];
+      if (
+        typeof match.id !== "string" ||
+        matchIds.has(match.id) ||
+        !Number.isInteger(match.court) ||
+        match.teamA.length !== 2 ||
+        match.teamB.length !== 2 ||
+        team.some((id) => !ids.has(id) || inRound.has(id))
+      )
+        return false;
+      matchIds.add(match.id);
+      team.forEach((id) => inRound.add(id));
+      if (match.scoreA === null || match.scoreB === null)
+        return match.scoreA === null && match.scoreB === null;
+      return isValidScore(points, match.scoreA, match.scoreB);
+    });
+  });
+  if (!complete) return false;
+  const finished =
+    schedule.length === rounds &&
+    schedule.every((r) => r.matches.every(isMatchComplete));
+  if (status === "completed") return finished;
+  const started = schedule.some((r) => r.matches.some(isMatchComplete));
+  return status === "in-progress" ? started : !started;
 }

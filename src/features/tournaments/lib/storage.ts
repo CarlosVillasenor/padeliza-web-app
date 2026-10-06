@@ -1,7 +1,7 @@
 import type { Tournament } from "../types/tournament.ts";
-import { validateTournament } from "./rules.ts";
+import { isValidSchedule, validateTournament } from "./rules.ts";
 
-export const STORAGE_KEY = "padeliza.tournaments.v1";
+export const STORAGE_KEY = "padeliza.tournaments.v2";
 function isTournament(value: unknown): value is Tournament {
   if (!value || typeof value !== "object") return false;
   const t = value as Record<string, unknown>;
@@ -10,7 +10,7 @@ function isTournament(value: unknown): value is Tournament {
     !t.id ||
     typeof t.createdAt !== "string" ||
     !Number.isFinite(Date.parse(t.createdAt)) ||
-    t.status !== "scheduled"
+    !Array.isArray(t.schedule)
   )
     return false;
   if (
@@ -34,7 +34,15 @@ function isTournament(value: unknown): value is Tournament {
     )
   )
     return false;
-  return validateTournament(value as Tournament) === null;
+  try {
+    return (
+      validateTournament(value as Tournament) === null &&
+      isValidSchedule(value as Tournament)
+    );
+  } catch {
+    // A malformed schedule can throw while being inspected; treat it as invalid.
+    return false;
+  }
 }
 export function decodeTournaments(raw: string | null): Tournament[] {
   if (raw === null) return [];
@@ -43,7 +51,7 @@ export function decodeTournaments(raw: string | null): Tournament[] {
     !parsed ||
     typeof parsed !== "object" ||
     !("version" in parsed) ||
-    parsed.version !== 1 ||
+    parsed.version !== 2 ||
     !("tournaments" in parsed) ||
     !Array.isArray(parsed.tournaments) ||
     !parsed.tournaments.every(isTournament)
@@ -55,5 +63,5 @@ export function decodeTournaments(raw: string | null): Tournament[] {
   return tournaments;
 }
 export function encodeTournaments(tournaments: Tournament[]): string {
-  return JSON.stringify({ version: 1, tournaments });
+  return JSON.stringify({ version: 2, tournaments });
 }

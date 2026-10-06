@@ -1,0 +1,95 @@
+.card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 2px solid var(--border);
+  border-radius: 1rem;
+  background: var(--surface);
+}
+.done {
+  border-color: var(--accent);
+}
+.pending {
+  border-color: #c99a1c;
+}
+.court {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+.teams {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+.team {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: center;
+  min-width: 0;
+}
+.score {
+  min-width: 4rem;
+  min-height: 3.25rem;
+  padding: 0 1rem;
+  font: inherit;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  border-radius: 0.75rem;
+  border: 2px solid var(--ink);
+  background: var(--ink);
+  color: #fff;
+  cursor: pointer;
+}
+.score:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.score:focus-visible {
+  outline: 3px solid #6ba928;
+  outline-offset: 3px;
+}
+.names {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 4.5rem;
+  padding: 0.75rem 1.1rem;
+  border-radius: 0.9rem;
+  background: #e9f5ef;
+  font-weight: 600;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.pending .names {
+  background: #fff6dd;
+}
+.versus {
+  position: absolute;
+  left: 50%;
+  bottom: 2.25rem;
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.status {
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.done .status {
+  color: var(--accent);
+}
+.pending .status {
+  color: #7a5a00;
+}
