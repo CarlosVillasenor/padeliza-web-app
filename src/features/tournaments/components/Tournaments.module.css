@@ -30,9 +30,16 @@
   color: var(--ink);
   padding: 0.6rem;
 }
-.header a {
+.header .backButton {
   display: grid;
   place-items: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+}
+.backButton svg {
+  width: 1.5rem;
+  height: 1.5rem;
 }
 .progress {
   width: 100%;

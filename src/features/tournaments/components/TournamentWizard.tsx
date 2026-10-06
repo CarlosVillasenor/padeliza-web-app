@@ -18,6 +18,22 @@ import type {
 import { useTournaments } from "./TournamentProvider";
 import styles from "./Tournaments.module.css";
 
+// An SVG centers predictably; the "←" glyph sits on the text baseline.
+const backIcon = (
+  <svg
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+    focusable="false"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.25"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M19 12H5M11 18l-6-6 6-6" />
+  </svg>
+);
+
 type Step =
   "type" | "players" | "courts" | "points" | "rounds" | "name" | "review";
 const titles: Record<Step, string> = {
@@ -144,16 +160,21 @@ export default function TournamentWizard() {
     <main className={styles.shell}>
       <header className={styles.header}>
         {index === 0 ? (
-          <Link href="/" aria-label="Volver a torneos">
-            ←
+          <Link
+            href="/"
+            className={styles.backButton}
+            aria-label="Volver a torneos"
+          >
+            {backIcon}
           </Link>
         ) : (
           <button
             type="button"
             onClick={() => move(steps[index - 1])}
+            className={styles.backButton}
             aria-label="Volver al paso anterior"
           >
-            ←
+            {backIcon}
           </button>
         )}
         <span>Nuevo torneo</span>
