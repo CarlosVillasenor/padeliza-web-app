@@ -1,0 +1,83 @@
+.shell {
+  --surface: #fff;
+  --ink: #0c1827;
+  --muted: #526573;
+  --accent: #006356;
+  --border: #cad8d5;
+  max-width: 38rem;
+  min-height: 100svh;
+  margin: auto;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 1rem;
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.backButton {
+  composes: button from "./shared.module.css";
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+}
+.backButton svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.progress {
+  width: 100%;
+  height: 0.4rem;
+  accent-color: var(--accent);
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 2rem;
+}
+.form h1 {
+  font-size: clamp(1.65rem, 6vw, 2.25rem);
+  line-height: 1.15;
+}
+.shell .submit {
+  width: 100%;
+  margin-top: 1rem;
+  background: var(--accent);
+  color: white;
+  border: none;
+}
+.nextLabel {
+  font-size: 1em;
+}
+.nextIcon {
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.error {
+  color: #9f2525;
+  background: #fff1ef;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+.retry {
+  composes: button from "./shared.module.css";
+}
+.shell :is(button, a, input):focus-visible {
+  outline: 3px solid #6ba928;
+  outline-offset: 3px;
+}
+@media (min-width: 36rem) {
+  .shell {
+    padding: 2rem;
+  }
+  .form {
+    gap: 1.25rem;
+  }
+}

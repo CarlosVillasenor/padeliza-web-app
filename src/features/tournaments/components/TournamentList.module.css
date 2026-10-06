@@ -1,0 +1,41 @@
+.cards {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+  margin: 1.5rem 0;
+  list-style: none;
+}
+.card {
+  border: 1px solid #cad8d5;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  overflow-wrap: anywhere;
+}
+.card h2 {
+  font-size: 1.25rem;
+}
+.card p {
+  margin-top: 0.6rem;
+  line-height: 1.5;
+  color: #526573;
+}
+.card details {
+  margin-top: 0.8rem;
+}
+.card summary {
+  cursor: pointer;
+  padding-block: 0.5rem;
+}
+.createLink {
+  display: block;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  background: #006356;
+  color: white;
+  text-align: center;
+  font-weight: 600;
+}
+.createLink:focus-visible {
+  outline: 3px solid #6ba928;
+  outline-offset: 4px;
+}

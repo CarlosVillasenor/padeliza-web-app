@@ -1,0 +1,14 @@
+.summary {
+  display: grid;
+  gap: 0.4rem;
+}
+.term {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 0.6rem;
+}
+.value {
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
