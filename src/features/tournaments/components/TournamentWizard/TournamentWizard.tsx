@@ -140,7 +140,6 @@ export default function TournamentWizard() {
       router.push("/");
       return;
     }
-    trackEvent("wizard-step-completed", { step, format });
     move(steps[index + 1]);
   }
   return (
