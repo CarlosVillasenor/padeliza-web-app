@@ -18,6 +18,13 @@ import {
   STORAGE_KEY,
 } from "../lib/storage";
 import { validateTournament } from "../lib/rules";
+import { createInitialSchedule } from "../lib/schedule";
+import {
+  addNextRound,
+  completeTournament,
+  recordScore,
+  type PlayResult,
+} from "../lib/play";
 
 type State = {
   tournaments: Tournament[];
@@ -38,6 +45,14 @@ const TournamentContext = createContext<
         input: TournamentInput,
         id: string,
       ) => TournamentError | null;
+      setScore: (
+        tournamentId: string,
+        matchId: string,
+        scoreA: number,
+        scoreB: number,
+      ) => TournamentError | null;
+      generateNextRound: (tournamentId: string) => TournamentError | null;
+      finishTournament: (tournamentId: string) => TournamentError | null;
       reload: () => void;
     })
   | null
@@ -87,6 +102,7 @@ export function TournamentProvider({ children }: { children: ReactNode }) {
         id,
         createdAt: new Date().toISOString(),
         status: "scheduled",
+        schedule: createInitialSchedule(input),
       };
       const tournaments = [tournament, ...current];
       localStorage.setItem(STORAGE_KEY, encodeTournaments(tournaments));
@@ -96,8 +112,52 @@ export function TournamentProvider({ children }: { children: ReactNode }) {
       return "saveFailed";
     }
   }
+  function updateTournament(
+    tournamentId: string,
+    change: (tournament: Tournament) => PlayResult,
+  ): TournamentError | null {
+    if (!state.ready || state.error) return "storageNotReady";
+    try {
+      // Read again before writing to include changes made in another tab.
+      const current = decodeTournaments(localStorage.getItem(STORAGE_KEY));
+      const target = current.find((t) => t.id === tournamentId);
+      if (!target) return "tournamentNotFound";
+      const result = change(target);
+      if (!result.ok) return result.error;
+      const tournaments = current.map((t) =>
+        t.id === tournamentId ? result.tournament : t,
+      );
+      localStorage.setItem(STORAGE_KEY, encodeTournaments(tournaments));
+      dispatch({ type: "loaded", tournaments });
+      return null;
+    } catch {
+      return "saveFailed";
+    }
+  }
+  const setScore = (
+    tournamentId: string,
+    matchId: string,
+    scoreA: number,
+    scoreB: number,
+  ) =>
+    updateTournament(tournamentId, (t) =>
+      recordScore(t, matchId, scoreA, scoreB),
+    );
+  const generateNextRound = (tournamentId: string) =>
+    updateTournament(tournamentId, addNextRound);
+  const finishTournament = (tournamentId: string) =>
+    updateTournament(tournamentId, completeTournament);
   return (
-    <TournamentContext.Provider value={{ ...state, createTournament, reload }}>
+    <TournamentContext.Provider
+      value={{
+        ...state,
+        createTournament,
+        setScore,
+        generateNextRound,
+        finishTournament,
+        reload,
+      }}
+    >
       {children}
     </TournamentContext.Provider>
   );

@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { americanoRounds, validateTournament } from "./rules.ts";
+import { createInitialSchedule } from "./schedule.ts";
 import { decodeTournaments, encodeTournaments } from "./storage.ts";
 import type { TournamentInput, Tournament } from "../types/tournament.ts";
 const input: TournamentInput = {
@@ -70,6 +71,7 @@ test("storage round trip, empty, corrupted, unsupported versions and duplicates"
     id: "t1",
     createdAt: new Date().toISOString(),
     status: "scheduled",
+    schedule: createInitialSchedule(input),
   };
   assert.deepEqual(decodeTournaments(null), []);
   assert.deepEqual(decodeTournaments(encodeTournaments([tournament])), [
@@ -78,14 +80,14 @@ test("storage round trip, empty, corrupted, unsupported versions and duplicates"
   for (const raw of [
     "broken",
     "{}",
-    '{"version":2,"tournaments":[]}',
+    '{"version":1,"tournaments":[]}',
     encodeTournaments([tournament, tournament]),
     JSON.stringify({
-      version: 1,
+      version: 2,
       tournaments: [{ ...tournament, players: [null] }],
     }),
     JSON.stringify({
-      version: 1,
+      version: 2,
       tournaments: [{ ...tournament, rounds: 99 }],
     }),
   ])

@@ -130,7 +130,7 @@ export default function TournamentWizard() {
         setSaving(false);
         return setError(errors[failure]);
       }
-      router.push("/");
+      router.push(`/tournaments/${submissionId.current}`);
       return;
     }
     move(steps[index + 1]);
