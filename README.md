@@ -40,7 +40,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## Creación de torneos (primera versión)
 
-Abre `/torneos/nuevo` o pulsa **Crear torneo** en el inicio. El formulario mantiene
+Abre `/tournaments/new` o pulsa **Crear torneo** en el inicio. El formulario mantiene
 el borrador al volver entre pasos; salir o recargar descarta ese borrador. Al
 confirmar, guarda un torneo en estado `scheduled` y vuelve al listado. La captura
 de resultados y la generación de emparejamientos quedan para la siguiente entrega.

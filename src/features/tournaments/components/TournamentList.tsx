@@ -42,7 +42,7 @@ export default function TournamentList({
           ))}
         </ul>
       )}
-      <Link className={styles.createLink} href="/torneos/nuevo">
+      <Link className={styles.createLink} href="/tournaments/new">
         + Crear torneo
       </Link>
       <p style={{ marginTop: "1rem", fontSize: ".85rem", textAlign: "center" }}>
