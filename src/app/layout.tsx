@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { locale, messages } from "@/shared/i18n";
 import { TournamentProvider } from "@/features/tournaments/components/TournamentProvider";
@@ -20,6 +21,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <TournamentProvider>{children}</TournamentProvider>
       </body>
+      <Script
+        src="https://cloud.umami.is/script.js"
+        data-website-id="80413473-1c26-4836-8dce-f1c93d3ab68b"
+        strategy="afterInteractive"
+      />
     </html>
   );
 }
