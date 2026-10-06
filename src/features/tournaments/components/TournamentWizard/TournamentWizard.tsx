@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Button from "@/shared/components/Button/Button";
+import { trackEvent } from "@/shared/lib/analytics";
 import { messages } from "@/shared/i18n";
 import {
   americanoRounds,
@@ -130,9 +131,16 @@ export default function TournamentWizard() {
         setSaving(false);
         return setError(errors[failure]);
       }
+      trackEvent("tournament-created", {
+        format,
+        players: players.length,
+        courts,
+        rounds: totalRounds,
+      });
       router.push("/");
       return;
     }
+    trackEvent("wizard-step-completed", { step, format });
     move(steps[index + 1]);
   }
   return (
