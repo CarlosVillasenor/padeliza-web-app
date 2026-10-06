@@ -7,7 +7,11 @@ import {
   useReducer,
   type ReactNode,
 } from "react";
-import type { Tournament, TournamentInput } from "../types/tournament";
+import type {
+  Tournament,
+  TournamentError,
+  TournamentInput,
+} from "../types/tournament";
 import {
   decodeTournaments,
   encodeTournaments,
@@ -18,11 +22,11 @@ import { validateTournament } from "../lib/rules";
 type State = {
   tournaments: Tournament[];
   ready: boolean;
-  error: string | null;
+  error: TournamentError | null;
 };
 type Action =
   | { type: "loaded"; tournaments: Tournament[] }
-  | { type: "failed"; error: string };
+  | { type: "failed"; error: TournamentError };
 function reducer(state: State, action: Action): State {
   if (action.type === "loaded")
     return { tournaments: action.tournaments, ready: true, error: null };
@@ -30,7 +34,10 @@ function reducer(state: State, action: Action): State {
 }
 const TournamentContext = createContext<
   | (State & {
-      createTournament: (input: TournamentInput, id: string) => string | null;
+      createTournament: (
+        input: TournamentInput,
+        id: string,
+      ) => TournamentError | null;
       reload: () => void;
     })
   | null
@@ -51,8 +58,7 @@ export function TournamentProvider({ children }: { children: ReactNode }) {
     } catch {
       dispatch({
         type: "failed",
-        error:
-          "No pudimos leer los torneos guardados. Los datos existentes no se han sobrescrito. Habilita el almacenamiento del navegador y vuelve a intentar.",
+        error: "storageUnavailable",
       });
     }
   }
@@ -64,11 +70,13 @@ export function TournamentProvider({ children }: { children: ReactNode }) {
     window.addEventListener("storage", sync);
     return () => window.removeEventListener("storage", sync);
   }, []);
-  function createTournament(input: TournamentInput, id: string): string | null {
+  function createTournament(
+    input: TournamentInput,
+    id: string,
+  ): TournamentError | null {
     const error = validateTournament(input);
     if (error) return error;
-    if (!state.ready || state.error)
-      return "Primero debemos recuperar los torneos guardados.";
+    if (!state.ready || state.error) return "storageNotReady";
     try {
       // Read again before writing to include changes made in another tab.
       const current = decodeTournaments(localStorage.getItem(STORAGE_KEY));
@@ -85,7 +93,7 @@ export function TournamentProvider({ children }: { children: ReactNode }) {
       dispatch({ type: "loaded", tournaments });
       return null;
     } catch {
-      return "No se pudo guardar el torneo. Revisa el espacio y los permisos del navegador e inténtalo de nuevo. Tu formulario se conserva.";
+      return "saveFailed";
     }
   }
   return (

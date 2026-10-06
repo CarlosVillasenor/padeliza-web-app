@@ -4,10 +4,11 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Button from "@/shared/components/Button/Button";
+import { locale, messages } from "@/shared/i18n";
 import {
   americanoRounds,
-  formatNames,
   playerCounts,
+  tournamentFormats,
   validateTournament,
 } from "../lib/rules";
 import type {
@@ -17,6 +18,13 @@ import type {
 } from "../types/tournament";
 import { useTournaments } from "./TournamentProvider";
 import styles from "./Tournaments.module.css";
+
+const {
+  formats,
+  formatDescriptions,
+  errors,
+  wizard: copy,
+} = messages.tournaments;
 
 // An SVG centers predictably; the "←" glyph sits on the text baseline.
 const backIcon = (
@@ -36,15 +44,6 @@ const backIcon = (
 
 type Step =
   "type" | "players" | "courts" | "points" | "rounds" | "name" | "review";
-const titles: Record<Step, string> = {
-  type: "Elige el tipo de torneo",
-  players: "Jugadores",
-  courts: "Pistas",
-  points: "Puntos",
-  rounds: "Rondas",
-  name: "Nombre del torneo",
-  review: "Verifica tu configuración",
-};
 
 export default function TournamentWizard() {
   const router = useRouter();
@@ -93,18 +92,16 @@ export default function TournamentWizard() {
   }
   function addPlayer() {
     const trimmed = playerName.trim();
-    if (!trimmed) return setError("Escribe el nombre del jugador.");
-    if (players.length >= 16)
-      return setError("Puedes agregar hasta 16 jugadores.");
+    if (!trimmed) return setError(copy.stepErrors.playerNameRequired);
+    if (players.length >= 16) return setError(copy.stepErrors.maxPlayers);
     if (
       players.some(
         (p) =>
-          p.name.toLocaleLowerCase("es") === trimmed.toLocaleLowerCase("es"),
+          p.name.toLocaleLowerCase(locale) ===
+          trimmed.toLocaleLowerCase(locale),
       )
     )
-      return setError(
-        "Ese jugador ya está en la lista. Usa un nombre distinto para identificarlo.",
-      );
+      return setError(copy.stepErrors.duplicatePlayer);
     setPlayers([...players, { id: crypto.randomUUID(), name: trimmed }]);
     setPlayerName("");
     setError(null);
@@ -112,12 +109,9 @@ export default function TournamentWizard() {
   function next(event: FormEvent) {
     event.preventDefault();
     if (step === "players") {
-      if (playerName.trim())
-        return setError(
-          "Presiona + para agregar el nombre pendiente o borra el campo antes de continuar.",
-        );
+      if (playerName.trim()) return setError(copy.stepErrors.pendingPlayerName);
       if (!playerCounts.includes(players.length))
-        return setError("Esta versión admite 4, 8, 12 o 16 jugadores.");
+        return setError(copy.stepErrors.unsupportedPlayerCount);
       setCourts(
         format === "mexicano"
           ? players.length / 4
@@ -130,26 +124,26 @@ export default function TournamentWizard() {
         Number(points) < 1 ||
         Number(points) > 100)
     )
-      return setError("Escribe entre 1 y 100 puntos.");
+      return setError(copy.stepErrors.pointsRange);
     if (
       step === "rounds" &&
       (!Number.isInteger(Number(rounds)) ||
         Number(rounds) < 1 ||
         Number(rounds) > 100)
     )
-      return setError("Escribe entre 1 y 100 rondas.");
+      return setError(copy.stepErrors.roundsRange);
     if (step === "name" && !name.trim())
-      return setError("Escribe el nombre del torneo.");
+      return setError(copy.stepErrors.nameRequired);
     if (step === "review") {
       if (saving) return;
       const validation = validateTournament(input);
-      if (validation) return setError(validation);
+      if (validation) return setError(errors[validation]);
       setSaving(true);
       submissionId.current ??= crypto.randomUUID();
       const failure = store.createTournament(input, submissionId.current);
       if (failure) {
         setSaving(false);
-        return setError(failure);
+        return setError(errors[failure]);
       }
       router.push("/");
       return;
@@ -163,7 +157,7 @@ export default function TournamentWizard() {
           <Link
             href="/"
             className={styles.backButton}
-            aria-label="Volver a torneos"
+            aria-label={copy.backToTournaments}
           >
             {backIcon}
           </Link>
@@ -172,30 +166,28 @@ export default function TournamentWizard() {
             type="button"
             onClick={() => move(steps[index - 1])}
             className={styles.backButton}
-            aria-label="Volver al paso anterior"
+            aria-label={copy.backToPreviousStep}
           >
             {backIcon}
           </button>
         )}
-        <span>Nuevo torneo</span>
-        <span>
-          {index + 1} / {steps.length}
-        </span>
+        <span>{copy.title}</span>
+        <span>{copy.stepProgress(index + 1, steps.length)}</span>
       </header>
       <progress
         className={styles.progress}
         value={index + 1}
         max={steps.length}
-        aria-label="Progreso de creación"
+        aria-label={copy.progressLabel}
       />
       <form className={styles.form} onSubmit={next} noValidate>
         <h1 ref={title} tabIndex={-1}>
-          {titles[step]}
+          {copy.stepTitles[step]}
         </h1>
         {step === "type" && (
           <fieldset>
-            <legend>Modalidad</legend>
-            {(["americano", "mexicano"] as const).map((value) => (
+            <legend>{copy.type.legend}</legend>
+            {tournamentFormats.map((value) => (
               <label className={styles.option} key={value}>
                 <input
                   type="radio"
@@ -204,12 +196,8 @@ export default function TournamentWizard() {
                   onChange={() => setFormat(value)}
                 />
                 <span>
-                  <strong>{formatNames[value]}</strong>
-                  <small>
-                    {value === "americano"
-                      ? "Cambia de pareja hasta jugar con todos. Rondas calculadas automáticamente."
-                      : "Las parejas se ajustan según la clasificación. Tú eliges cuántas rondas jugar."}
-                  </small>
+                  <strong>{formats[value]}</strong>
+                  <small>{formatDescriptions[value]}</small>
                 </span>
               </label>
             ))}
@@ -217,10 +205,8 @@ export default function TournamentWizard() {
         )}
         {step === "players" && (
           <>
-            <p>
-              Agrega 4, 8, 12 o 16 jugadores. Cada nombre debe ser distinto.
-            </p>
-            <label htmlFor="player">Añadir jugador</label>
+            <p>{copy.players.intro}</p>
+            <label htmlFor="player">{copy.players.inputLabel}</label>
             <div className={styles.row}>
               <input
                 id="player"
@@ -237,20 +223,20 @@ export default function TournamentWizard() {
               />
               <button
                 type="button"
-                aria-label="Añadir jugador"
+                aria-label={copy.players.addButton}
                 onClick={addPlayer}
               >
                 +
               </button>
             </div>
-            <p aria-live="polite">{players.length} jugadores agregados</p>
+            <p aria-live="polite">{copy.players.added(players.length)}</p>
             <ul className={styles.players}>
               {players.map((player) => (
                 <li key={player.id}>
                   <span>{player.name}</span>
                   <button
                     type="button"
-                    aria-label={`Eliminar a ${player.name}`}
+                    aria-label={copy.players.remove(player.name)}
                     onClick={() =>
                       setPlayers(players.filter((p) => p.id !== player.id))
                     }
@@ -266,11 +252,11 @@ export default function TournamentWizard() {
           <>
             <p>
               {format === "mexicano"
-                ? `Para ${players.length} jugadores necesitas ${players.length / 4} pistas: todos juegan en cada ronda.`
-                : "¿Cuántas pistas usarás? Con menos pistas habrá turnos de descanso."}
+                ? copy.courts.introMexicano(players.length, players.length / 4)
+                : copy.courts.introAmericano}
             </p>
             <fieldset>
-              <legend>Pistas disponibles</legend>
+              <legend>{copy.courts.legend}</legend>
               <div className={styles.choices}>
                 {[1, 2, 3, 4].map((value) => (
                   <label className={styles.option} key={value}>
@@ -294,10 +280,7 @@ export default function TournamentWizard() {
         )}
         {step === "points" && (
           <>
-            <p>
-              Puntos totales por partido. Si eliges 16, el marcador puede ser
-              10–6 u 8–8; no es el primero en llegar a 16.
-            </p>
+            <p>{copy.points.intro}</p>
             <div className={styles.choices}>
               {[8, 16, 24, 32].map((value) => (
                 <button
@@ -310,7 +293,7 @@ export default function TournamentWizard() {
                 </button>
               ))}
             </div>
-            <label htmlFor="points">Puntos totales (personalizable)</label>
+            <label htmlFor="points">{copy.points.customLabel}</label>
             <input
               id="points"
               type="number"
@@ -324,12 +307,8 @@ export default function TournamentWizard() {
         )}
         {step === "rounds" && (
           <>
-            <p>
-              La primera ronda será aleatoria; las siguientes se organizarán
-              según la clasificación. El número de jugadores no determina cuándo
-              termina el torneo.
-            </p>
-            <label htmlFor="rounds">Número de rondas</label>
+            <p>{copy.rounds.intro}</p>
+            <label htmlFor="rounds">{copy.rounds.label}</label>
             <input
               id="rounds"
               type="number"
@@ -343,7 +322,7 @@ export default function TournamentWizard() {
         )}
         {step === "name" && (
           <>
-            <label htmlFor="name">Ingresa el nombre de tu torneo</label>
+            <label htmlFor="name">{copy.name.label}</label>
             <div className={styles.row}>
               <input
                 id="name"
@@ -353,15 +332,12 @@ export default function TournamentWizard() {
               />
               <button
                 type="button"
-                aria-label="Generar nombre aleatorio"
+                aria-label={copy.name.randomButton}
                 onClick={() =>
                   setName(
-                    [
-                      "Torneo del Domingo",
-                      "Encuentro de Campeones",
-                      "Amigos de la Pista",
-                      "Tarde de Pádel",
-                    ][Math.floor(Math.random() * 4)],
+                    copy.name.randomNames[
+                      Math.floor(Math.random() * copy.name.randomNames.length)
+                    ],
                   )
                 }
               >
@@ -373,35 +349,31 @@ export default function TournamentWizard() {
         {step === "review" && (
           <>
             <dl className={styles.summary}>
-              <dt>Nombre</dt>
+              <dt>{copy.review.name}</dt>
               <dd>{name}</dd>
-              <dt>Tipo</dt>
-              <dd>{formatNames[format]}</dd>
-              <dt>Jugadores</dt>
+              <dt>{copy.review.format}</dt>
+              <dd>{formats[format]}</dd>
+              <dt>{copy.review.players}</dt>
               <dd>
                 {players.length}: {players.map((p) => p.name).join(", ")}
               </dd>
-              <dt>Pistas</dt>
+              <dt>{copy.review.courts}</dt>
               <dd>{courts}</dd>
-              <dt>Puntos totales por partido</dt>
+              <dt>{copy.review.points}</dt>
               <dd>{points}</dd>
-              <dt>Rondas</dt>
+              <dt>{copy.review.rounds}</dt>
               <dd>{totalRounds}</dd>
-              <dt>Partidos por jugador</dt>
+              <dt>{copy.review.matchesPerPlayer}</dt>
               <dd>{format === "americano" ? players.length - 1 : rounds}</dd>
             </dl>
             {format === "americano" && (
               <p>
-                Una pareja distinta en cada partido.{" "}
                 {courts * 4 < players.length
-                  ? "Habrá descansos: completamos cada rotación por turnos antes de la siguiente."
-                  : "Todos juegan en cada ronda."}
+                  ? copy.review.americanoWithRests
+                  : copy.review.americanoNoRests}
               </p>
             )}
-            <p>
-              El torneo se guardará en este navegador. La captura de resultados
-              estará disponible en una siguiente entrega.
-            </p>
+            <p>{copy.review.saveNotice}</p>
           </>
         )}
         {error && (
@@ -411,9 +383,9 @@ export default function TournamentWizard() {
         )}
         {store.error && (
           <div role="alert" className={styles.error}>
-            {store.error}
+            {errors[store.error]}
             <button type="button" onClick={store.reload}>
-              Volver a intentar
+              {messages.common.retry}
             </button>
           </div>
         )}
@@ -426,13 +398,13 @@ export default function TournamentWizard() {
         >
           {step === "review" ? (
             saving ? (
-              "Guardando…"
+              copy.actions.saving
             ) : (
-              "Crear torneo"
+              copy.actions.create
             )
           ) : (
             <>
-              <span className={styles.nextLabel}>Siguiente</span>
+              <span className={styles.nextLabel}>{copy.actions.next}</span>
               <svg
                 className={styles.nextIcon}
                 viewBox="0 0 24 24"

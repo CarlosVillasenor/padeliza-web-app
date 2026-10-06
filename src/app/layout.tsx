@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
+import { locale, messages } from "@/shared/i18n";
 import { TournamentProvider } from "@/features/tournaments/components/TournamentProvider";
 
 const geistSans = Geist({
@@ -9,13 +10,13 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Padeliza",
-  description: "Crea y administra tus torneos de pádel.",
+  title: messages.metadata.title,
+  description: messages.metadata.description,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es" className={geistSans.variable}>
+    <html lang={locale} className={geistSans.variable}>
       <body>
         <TournamentProvider>{children}</TournamentProvider>
       </body>

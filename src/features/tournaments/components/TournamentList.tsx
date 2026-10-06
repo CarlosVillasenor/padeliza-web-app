@@ -2,8 +2,10 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { useTournaments } from "./TournamentProvider";
-import { formatNames } from "../lib/rules";
+import { messages } from "@/shared/i18n";
 import styles from "./Tournaments.module.css";
+
+const { formats, errors, status, list: copy } = messages.tournaments;
 
 export default function TournamentList({
   emptyState,
@@ -11,12 +13,12 @@ export default function TournamentList({
   emptyState: ReactNode;
 }) {
   const { tournaments, ready, error, reload } = useTournaments();
-  if (!ready) return <p role="status">Cargando tus torneos…</p>;
+  if (!ready) return <p role="status">{copy.loading}</p>;
   if (error)
     return (
       <div role="alert">
-        <p>{error}</p>
-        <button onClick={reload}>Volver a intentar</button>
+        <p>{errors[error]}</p>
+        <button onClick={reload}>{messages.common.retry}</button>
       </div>
     );
   return (
@@ -28,14 +30,16 @@ export default function TournamentList({
           {tournaments.map((t) => (
             <li key={t.id} className={styles.card}>
               <h2>{t.name}</h2>
-              <p>{formatNames[t.format]} · Preparado</p>
               <p>
-                {t.players.length} jugadores · {t.courts} pistas · {t.rounds}{" "}
-                rondas
+                {formats[t.format]} · {status[t.status]}
               </p>
-              <p>{t.points} puntos totales por partido</p>
+              <p>
+                {copy.playerCount(t.players.length)} ·{" "}
+                {copy.courtCount(t.courts)} · {copy.roundCount(t.rounds)}
+              </p>
+              <p>{copy.pointsPerMatch(t.points)}</p>
               <details>
-                <summary>Ver jugadores</summary>
+                <summary>{copy.viewPlayers}</summary>
                 <p>{t.players.map((p) => p.name).join(", ")}</p>
               </details>
             </li>
@@ -43,11 +47,10 @@ export default function TournamentList({
         </ul>
       )}
       <Link className={styles.createLink} href="/tournaments/new">
-        + Crear torneo
+        {copy.create}
       </Link>
       <p style={{ marginTop: "1rem", fontSize: ".85rem", textAlign: "center" }}>
-        Guardado solo en este navegador. Borrar los datos del sitio elimina los
-        torneos.
+        {copy.storageNotice}
       </p>
     </>
   );
