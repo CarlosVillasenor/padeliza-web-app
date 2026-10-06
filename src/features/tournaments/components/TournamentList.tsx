@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { useTournaments } from "./TournamentProvider";
 import { messages } from "@/shared/i18n";
-import styles from "./Tournaments.module.css";
+import styles from "./TournamentList.module.css";
 
 const { formats, errors, status, list: copy } = messages.tournaments;
 
