@@ -424,11 +424,30 @@ export default function TournamentWizard() {
             saving || (step === "review" && (!store.ready || !!store.error))
           }
         >
-          {step === "review"
-            ? saving
-              ? "Guardando…"
-              : "Crear torneo"
-            : "Siguiente →"}
+          {step === "review" ? (
+            saving ? (
+              "Guardando…"
+            ) : (
+              "Crear torneo"
+            )
+          ) : (
+            <>
+              <span className={styles.nextLabel}>Siguiente</span>
+              <svg
+                className={styles.nextIcon}
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.25"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </>
+          )}
         </Button>
       </form>
     </main>
