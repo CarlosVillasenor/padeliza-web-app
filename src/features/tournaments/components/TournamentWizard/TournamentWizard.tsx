@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Button from "@/shared/components/Button/Button";
+import Button from "@/features/tournaments/components/Button/Button";
 import { messages } from "@/shared/i18n";
 import {
   americanoRounds,
@@ -15,7 +15,7 @@ import type {
   TournamentFormat,
   TournamentInput,
 } from "../../types/tournament";
-import { useTournaments } from "../TournamentProvider";
+import { useTournaments } from "../../hooks/TournamentProvider";
 import CourtsStep from "./steps/CourtsStep/CourtsStep";
 import NameStep from "./steps/NameStep/NameStep";
 import PlayersStep from "./steps/PlayersStep/PlayersStep";

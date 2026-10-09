@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Button from "@/shared/components/Button/Button";
+import Button from "@/features/tournaments/components/Button/Button";
 import { messages } from "@/shared/i18n";
 import {
   canEditScores,
@@ -15,7 +15,7 @@ import {
 import { scoresFromSelection } from "../../lib/scoring";
 import type { TeamSide } from "../../lib/scoring";
 import type { TournamentError } from "../../types/tournament";
-import { useTournaments } from "../TournamentProvider";
+import { useTournaments } from "../../hooks/TournamentProvider";
 import MatchCard from "./MatchCard/MatchCard";
 import ResultsStep from "./ResultsStep/ResultsStep";
 import RoundCarousel from "./RoundCarousel/RoundCarousel";

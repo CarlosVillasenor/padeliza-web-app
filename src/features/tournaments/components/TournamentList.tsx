@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { useTournaments } from "./TournamentProvider";
+import { useTournaments } from "../hooks/TournamentProvider";
 import { messages } from "@/shared/i18n";
 import styles from "./TournamentList.module.css";
 

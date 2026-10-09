@@ -3,7 +3,7 @@ import { Geist } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { locale, messages } from "@/shared/i18n";
-import { TournamentProvider } from "@/features/tournaments/components/TournamentProvider";
+import { TournamentProvider } from "@/features/tournaments/hooks/TournamentProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
