@@ -1,97 +1,131 @@
-# padeliza-web-app
-A Next.js web app to create "americano" style tournaments for a game of Padel.
+# Padeliza
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+A web application for creating and managing Americano and Mexicano padel
+tournaments. It is built with Next.js App Router, React, and TypeScript.
+Tournament data is stored in the browser's local storage.
 
-## Getting Started
+## Requirements and development
 
-First, run the development server:
+Node.js 26 (the version specified in `.nvmrc`) and npm are required.
 
 ```bash
+nvm use
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-## Creación y gestión de torneos
-
-Abre `/tournaments/new` o pulsa **Crear torneo** en el inicio. El formulario mantiene
-el borrador al volver entre pasos; salir o recargar descarta ese borrador. Al
-confirmar, guarda un torneo en estado `scheduled` y abre su página. Desde allí se
-pueden capturar resultados, generar rondas y consultar la clasificación.
-
-### Organización del código
-
-- `src/app/`: rutas, composición de páginas, layout global y estilos globales.
-- `src/features/tournaments/`: interfaz, estado, reglas, tipos y cálculos propios de torneos.
-- `src/shared/`: localización común y tokens globales de estilo.
-
-- Americano: 4, 8, 12 o 16 jugadores; de 1 a N/4 pistas. Una rotación contiene N/4
-  partidos y cada jugador tendrá N−1 parejas distintas. Para calcular los turnos,
-  se completa cada rotación en lotes de hasta C pistas antes de pasar a la siguiente:
-  `(N−1) × ceil((N/4)/C)`. No se promete el calendario más corto posible; por ejemplo,
-  12 jugadores y 2 pistas dan 22 turnos, con el último lote de cada rotación parcial.
-- Mexicano: cuatro jugadores por pista, entre 1 y 4 pistas. Rondas elegidas por el
-  organizador (1–100). La primera ronda es aleatoria; las siguientes agrupan la
-  clasificación de cuatro en cuatro (1+4 contra 2+3). La clasificación desempata por
-  puntos, victorias y nombre.
-- Puntuación: suma fija por partido, entre 1 y 100, incluidos empates cuando proceda.
-  Las opciones son 8, 16, 24 y 32. Los puntos no determinan las rondas.
-
-### Módulos principales
-
-- `src/features/tournaments/components/TournamentWizard/TournamentWizard.tsx`: borrador y pasos.
-- `src/features/tournaments/lib/rules.ts`: reglas y validación del dominio.
-- `src/features/tournaments/hooks/TournamentProvider.tsx`: Context + reducer,
-  montado en el layout común. Expone `useTournaments()`.
-- `src/features/tournaments/lib/storage.ts`: almacenamiento versionado y validación
-  de datos externos. Clave: `padeliza.tournaments.v2`.
-
-Los torneos se guardan únicamente en localStorage, sin API ni base de datos remota.
-La escritura sucede antes de confirmar el éxito. Si falla, el formulario permanece;
-si los datos guardados están dañados o usan otra versión, no se sobrescriben.
-Las pestañas reciben cambios mediante el evento `storage`; escrituras simultáneas
-no son transaccionales. No hay sincronización entre dispositivos, copia de seguridad
-ni garantía de conservar los datos si el navegador los borra. Esta persistencia no
-implica que el sitio completo funcione sin conexión.
-
-### Verificación
-
-Con Node 26 (`nvm use`):
+Open [http://localhost:3000](http://localhost:3000). Available commands:
 
 ```bash
-node --test src/features/tournaments/lib/rules.test.ts
-npm run lint
-npm run build
+npm test                 # Domain tests
+npm run lint             # ESLint
+npx tsc --noEmit         # TypeScript validation
+npm run build            # Production build
+npm start                # Serve the production build
 ```
 
-Prueba manual: crear un Americano de cuatro jugadores, retroceder entre pasos,
-confirmar tres rondas, crear y recargar el listado. Repetir con Mexicano, verificando
-cuatro jugadores por pista y número de rondas editable. Comprobar nombres duplicados,
-valores vacíos y puntuaciones inválidas. Si el almacenamiento está bloqueado o lleno,
-no debe aparecer una confirmación de guardado ni perderse lo escrito.
+## Routes and workflows
+
+- `/`: Lists saved tournaments and provides a way to start a new one.
+- `/tournaments/new`: Wizard for configuring the format, players, courts,
+  scoring, number of rounds when applicable, and tournament name. You can
+  move between steps without losing the draft; leaving or reloading discards it.
+- `/tournaments/[id]`: Displays matches and lets you enter results. In Mexicano,
+  each next round can be generated after completing all matches in the current
+  round. When the tournament is complete, this route displays the standings.
+
+Route pages in `src/app/` compose tournament features; the UI, state, and
+business rules belong to the feature.
+
+## Architecture
+
+```text
+src/
+├── app/                              # Routes, layout, and global styles
+│   ├── tournaments/
+│   │   ├── [id]/page.tsx             # Tournament view composition
+│   │   └── new/page.tsx              # Wizard composition
+│   ├── layout.tsx                    # Root layout and tournament provider
+│   └── page.tsx                      # Home page and tournament list
+├── features/tournaments/
+│   ├── components/                   # List, wizard, play UI, and components
+│   ├── hooks/TournamentProvider.tsx  # Shared state and tournament actions
+│   ├── lib/                          # Rules, scheduling, scoring, and storage
+│   └── types/tournament.ts           # Domain types and error codes
+└── shared/
+    ├── i18n/                         # UI localization configuration and messages
+    └── styles/variables.css          # Global style tokens
+```
+
+The `@/` alias points to `src/`, as configured in `tsconfig.json`. Routes may
+import from `features/` and `shared/`; feature modules should not import from
+`app/`, and `shared/` must not depend on a feature. Keep components that are
+used by only one feature inside that feature.
+
+Route components are Server Components by default. The provider and interfaces
+that use state, event handlers, or browser APIs are Client Components. The
+provider is mounted in the root layout to share tournament data and mutations
+across routes.
+
+### Feature responsibilities
+
+- `components/TournamentWizard/`: Temporary form state and tournament creation
+  steps.
+- `components/TournamentPlay/`: Match view, score editing, and final standings.
+- `hooks/TournamentProvider.tsx`: Context, data loading, and tournament
+  creation, scoring, round generation, and completion actions.
+- `lib/rules.ts`: Tournament configuration and schedule validation.
+- `lib/schedule.ts`: Match and round generation.
+- `lib/scoring.ts`, `lib/progress.ts`, and `lib/standings.ts`: Score validation,
+  progression rules, and standings calculations.
+- `lib/play.ts`: Domain operations for matches and tournaments.
+- `lib/storage.ts`: Storage encoding, validation, and decoding.
+- `types/tournament.ts`: Domain types and error codes; user-facing messages
+  remain in `shared/i18n/`.
+
+## Tournament rules
+
+- **Players:** 4, 8, 12, or 16; IDs and names must be unique. Names are compared
+  case-insensitively.
+- **Americano:** Every player partners with every other player once. Rotations
+  are processed in batches of up to the configured number of courts. The number
+  of rounds is `(N - 1) × ceil((N / 4) / C)`, where `N` is the number of players
+  and `C` is the number of courts. For example, 12 players and 2 courts produce
+  22 rounds.
+- **Mexicano:** Four players per court, with 1 to 4 courts. The first round is
+  randomized; subsequent rounds are generated from the standings in groups of
+  four. Within each group, first and fourth play against second and third.
+- **Scoring:** Each match score must total the configured value, from 1 to 100.
+  Ties are allowed. Each player's points include the score earned by their team.
+- **Standings:** Players are sorted by points descending, then wins descending,
+  then name. Players tied on points and wins share the same position.
+- **Editing and completion:** Americano scores can be edited until the
+  tournament is complete. In Mexicano, only the latest round can be edited
+  because later rounds depend on its results. A tournament is complete when
+  every round has been generated and every match has a score.
+
+## Persistence and limitations
+
+Tournaments are stored in `localStorage` under the key
+`padeliza.tournaments.v2` using a versioned format. On load, the app validates
+the configuration, schedule, scores, and uniqueness of IDs. Corrupted data or
+an unrecognized version produces a visible error and is not automatically
+overwritten.
+
+Writes happen before an operation is reported as successful; if a write fails,
+the UI displays an error. Other tabs receive updates through the `storage`
+event, but simultaneous writes are not transactional. There is no API, remote
+database, cross-device synchronization, or backup. The browser may clear this
+data, and using `localStorage` does not mean the app works offline.
+
+## Tests
+
+Domain tests are located next to the modules they validate:
+
+- `src/features/tournaments/lib/rules.test.ts`: Configuration, rounds, and
+  persistence.
+- `src/features/tournaments/lib/play.test.ts`: Scores, progression, standings,
+  and round generation.
+
+Run `npm test` to run all tests. When changing rules or persistence, update the
+relevant tests and also validate lint, TypeScript, and the production build.
