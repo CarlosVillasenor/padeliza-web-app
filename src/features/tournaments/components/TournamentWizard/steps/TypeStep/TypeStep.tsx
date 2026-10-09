@@ -10,6 +10,7 @@ type TypeStepProps = {
   onFormatChange: (format: TournamentFormat) => void;
 };
 
+/** Lets the user choose the tournament format and explains each option. */
 export default function TypeStep({ format, onFormatChange }: TypeStepProps) {
   return (
     <fieldset className={shared.fieldset}>

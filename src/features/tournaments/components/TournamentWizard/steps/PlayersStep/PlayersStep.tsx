@@ -13,6 +13,10 @@ type PlayersStepProps = {
   onError: (message: string | null) => void;
 };
 
+/**
+ * Collects unique player names, assigning each accepted player a stable ID.
+ * Reports invalid, duplicate, or excess entries through `onError`.
+ */
 export default function PlayersStep({
   players,
   playerName,

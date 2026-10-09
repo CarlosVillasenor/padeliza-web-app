@@ -15,6 +15,7 @@ export const metadata: Metadata = {
   description: messages.metadata.description,
 };
 
+/** Provides the document shell, active locale, tournament context, and metadata. */
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang={locale} className={geistSans.variable}>

@@ -11,6 +11,10 @@ type CourtsStepProps = {
   onCourtsChange: (courts: number) => void;
 };
 
+/**
+ * Selects the court count allowed by the player count and format.
+ * Mexicano requires one court per group of four players.
+ */
 export default function CourtsStep({
   format,
   playerCount,

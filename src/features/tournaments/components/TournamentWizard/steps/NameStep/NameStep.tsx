@@ -8,6 +8,7 @@ type NameStepProps = {
   onNameChange: (name: string) => void;
 };
 
+/** Collects a tournament name and offers a randomly selected suggestion. */
 export default function NameStep({ name, onNameChange }: NameStepProps) {
   return (
     <>

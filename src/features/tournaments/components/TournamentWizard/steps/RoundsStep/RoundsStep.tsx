@@ -8,6 +8,7 @@ type RoundsStepProps = {
   onRoundsChange: (rounds: string) => void;
 };
 
+/** Collects the configured round count for Mexicano tournaments. */
 export default function RoundsStep({
   rounds,
   onRoundsChange,

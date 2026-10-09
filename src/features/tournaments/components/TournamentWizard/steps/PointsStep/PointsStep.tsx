@@ -8,6 +8,7 @@ type PointsStepProps = {
   onPointsChange: (points: string) => void;
 };
 
+/** Selects the per-match point total using a preset or a custom value. */
 export default function PointsStep({
   points,
   onPointsChange,

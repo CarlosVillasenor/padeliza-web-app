@@ -6,6 +6,7 @@ import styles from "./ReviewStep.module.css";
 const { formats, wizard } = messages.tournaments;
 const copy = wizard.review;
 
+/** Summarizes the current tournament configuration before creation. */
 export default function ReviewStep({ input }: { input: TournamentInput }) {
   const { name, format, players, courts, points, rounds } = input;
   return (

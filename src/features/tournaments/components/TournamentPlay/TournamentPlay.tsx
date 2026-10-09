@@ -41,6 +41,11 @@ const backIcon = (
   </svg>
 );
 
+/**
+ * Loads and presents a tournament's rounds, score editing, and completion flow.
+ * Displays loading/error/not-found states and switches to final standings when
+ * the tournament is complete.
+ */
 export default function TournamentPlay({ id }: { id: string }) {
   const store = useTournaments();
   const tournament = store.tournaments.find((t) => t.id === id);

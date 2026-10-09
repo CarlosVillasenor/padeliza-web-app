@@ -7,6 +7,7 @@ import styles from "./page.module.css";
 
 const copy = messages.home;
 
+/** Renders the home shell, tournament list, and its first-use empty state. */
 export default function Home() {
   return (
     <main className={styles.page}>
