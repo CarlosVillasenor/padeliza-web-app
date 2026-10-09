@@ -2,7 +2,7 @@ import type { Match, Round } from "../types/tournament.ts";
 
 export type TeamSide = "a" | "b";
 
-// Every match shares out exactly `points`, so the two scores always add up to it.
+/** Checks that both scores are non-negative integers totaling `points`. */
 export function isValidScore(points: number, a: number, b: number): boolean {
   return (
     Number.isInteger(a) && Number.isInteger(b) && a >= 0 && b >= 0 && a + b === points
@@ -13,7 +13,10 @@ export function opponentScore(points: number, score: number): number {
   return points - score;
 }
 
-// Picking one side's score derives the other, so users never enter an invalid total.
+/**
+ * Produces both team scores from a selected side's score.
+ * The caller is responsible for validating that `value` is allowed.
+ */
 export function scoresFromSelection(
   points: number,
   side: TeamSide,

@@ -88,6 +88,10 @@ function groupsOfFour(ranked: readonly string[], roundNumber: number): Round {
   return { number: roundNumber, matches };
 }
 
+/**
+ * Creates the randomized opening Mexicano round.
+ * Supply `random` when deterministic player pairings are needed.
+ */
 export function generateFirstRound(
   players: readonly Player[],
   random: Random = Math.random,
@@ -101,11 +105,19 @@ export function generateFirstRound(
   );
 }
 
+/**
+ * Builds the next Mexicano round from current standings.
+ * Callers must ensure the current round is complete before appending it.
+ */
 export function generateNextRound(tournament: Tournament): Round {
   const ranked = computeStandings(tournament).map((row) => row.playerId);
   return groupsOfFour(ranked, tournament.schedule.length + 1);
 }
 
+/**
+ * Creates all rounds for Americano, or only the randomized opening round for
+ * Mexicano. `random` can be supplied to make the opening round deterministic.
+ */
 export function createInitialSchedule(
   input: TournamentInput,
   random: Random = Math.random,

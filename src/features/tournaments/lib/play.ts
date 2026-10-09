@@ -17,6 +17,7 @@ export type PlayResult =
 
 const fail = (error: TournamentError): PlayResult => ({ ok: false, error });
 
+/** Records a valid match result while enforcing the format's score-edit rules. */
 export function recordScore(
   tournament: Tournament,
   matchId: string,
@@ -47,6 +48,7 @@ export function recordScore(
   return { ok: true, tournament: { ...updated, status: statusAfterScore(updated) } };
 }
 
+/** Appends the next standings-based round when Mexicano progression allows it. */
 export function addNextRound(tournament: Tournament): PlayResult {
   if (!canGenerateNextRound(tournament)) return fail("cannotGenerateRound");
   return {
@@ -58,6 +60,7 @@ export function addNextRound(tournament: Tournament): PlayResult {
   };
 }
 
+/** Marks the tournament complete only after all configured rounds are scored. */
 export function completeTournament(tournament: Tournament): PlayResult {
   if (!canFinishTournament(tournament)) return fail("cannotFinish");
   return { ok: true, tournament: { ...tournament, status: "completed" } };

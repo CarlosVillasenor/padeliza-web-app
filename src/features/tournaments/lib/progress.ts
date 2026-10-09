@@ -8,7 +8,7 @@ export function pendingMatches(tournament: Tournament): number {
   );
 }
 
-// Mexicano rounds that depend on results and have not been generated yet.
+/** Number of configured Mexicano rounds that have not yet been generated. */
 export function ungeneratedRounds(tournament: Tournament): number {
   return tournament.rounds - tournament.schedule.length;
 }
@@ -21,8 +21,11 @@ export function canFinishTournament(tournament: Tournament): boolean {
   );
 }
 
-// Americano allows editing any round until the tournament ends. In Mexicano the
-// next round is paired from earlier results, so only the latest round stays open.
+/**
+ * Determines whether a round's scores can still be changed.
+ * Americano keeps every round editable until completion; Mexicano locks earlier
+ * rounds once a later round has been generated from their results.
+ */
 export function canEditScores(
   tournament: Tournament,
   roundNumber: number,
@@ -32,7 +35,7 @@ export function canEditScores(
   return roundNumber === tournament.schedule.length;
 }
 
-// Prevent generating a new round until all matches in the current round have results.
+/** A Mexicano round can be generated only after completing the current round. */
 export function canGenerateNextRound(tournament: Tournament): boolean {
   const current = tournament.schedule.at(-1);
   return (
@@ -52,7 +55,7 @@ export function statusAfterScore(tournament: Tournament): TournamentStatus {
   return started ? "in-progress" : "scheduled";
 }
 
-// Round the user should see first: the earliest one still missing results.
+/** Returns the earliest unfinished round, or the latest round if all are done. */
 export function defaultRoundNumber(tournament: Tournament): number {
   const open = tournament.schedule.find((r) => !isRoundComplete(r));
   return (open ?? tournament.schedule.at(-1))?.number ?? 1;

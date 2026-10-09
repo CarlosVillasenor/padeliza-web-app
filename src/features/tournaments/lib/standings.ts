@@ -1,7 +1,10 @@
 import type { StandingRow, Tournament } from "../types/tournament.ts";
 import { isMatchComplete } from "./scoring.ts";
 
-// Each player earns the points scored by their team in every completed match.
+/**
+ * Calculates standings from completed matches, ordering by points, wins, then
+ * name. Players with equal points and wins share a position.
+ */
 export function computeStandings(tournament: Tournament): StandingRow[] {
   const totals = new Map(
     tournament.players.map((p) => [p.id, { points: 0, wins: 0 }]),

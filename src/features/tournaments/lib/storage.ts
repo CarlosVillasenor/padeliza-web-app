@@ -44,6 +44,11 @@ function isTournament(value: unknown): value is Tournament {
     return false;
   }
 }
+/**
+ * Decodes and validates the versioned local-storage payload.
+ * A missing value means an empty list; malformed or unsupported data throws
+ * rather than being silently replaced.
+ */
 export function decodeTournaments(raw: string | null): Tournament[] {
   if (raw === null) return [];
   const parsed: unknown = JSON.parse(raw);
@@ -62,6 +67,7 @@ export function decodeTournaments(raw: string | null): Tournament[] {
     throw new Error("Duplicate tournament IDs");
   return tournaments;
 }
+/** Encodes tournaments using the currently supported storage format (version 2). */
 export function encodeTournaments(tournaments: Tournament[]): string {
   return JSON.stringify({ version: 2, tournaments });
 }

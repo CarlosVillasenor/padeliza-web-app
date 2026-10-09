@@ -10,10 +10,18 @@ export const playerCounts = [4, 8, 12, 16];
 
 // Each complete partner rotation has N/4 matches. Finish its batches before
 // starting the next rotation; this favors an understandable schedule over packing.
+/**
+ * Calculates the required schedule length for an Americano tournament.
+ * Each partnership rotation is split into batches that fit the configured courts.
+ */
 export function americanoRounds(players: number, courts: number): number {
   return (players - 1) * Math.ceil(players / 4 / courts);
 }
 
+/**
+ * Returns the first configuration error, or `null` when the input is valid.
+ * Checks names, player/court counts, scoring points, and format-specific rounds.
+ */
 export function validateTournament(
   input: TournamentInput,
 ): TournamentValidationError | null {
@@ -50,7 +58,10 @@ export function validateTournament(
   return null;
 }
 
-// Checks the stored schedule and status against the tournament configuration.
+/**
+ * Checks that a tournament's stored rounds, matches, scores, and status agree
+ * with its configuration.
+ */
 export function isValidSchedule(tournament: Tournament): boolean {
   const { schedule, players, courts, points, rounds, format, status } =
     tournament;

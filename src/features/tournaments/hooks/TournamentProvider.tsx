@@ -58,6 +58,7 @@ const TournamentContext = createContext<
   | null
 >(null);
 
+/** Shares persisted tournament state and domain actions across application routes. */
 export function TournamentProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, {
     tournaments: [],
@@ -162,6 +163,11 @@ export function TournamentProvider({ children }: { children: ReactNode }) {
     </TournamentContext.Provider>
   );
 }
+
+/**
+ * Reads tournament state and actions from the root provider.
+ * Throws when rendered outside `TournamentProvider`.
+ */
 export function useTournaments() {
   const context = useContext(TournamentContext);
   if (!context) throw new Error("TournamentProvider is required");

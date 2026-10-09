@@ -14,6 +14,9 @@ npm install
 npm run dev
 ```
 
+No environment variables are required for local development or production
+builds.
+
 Open [http://localhost:3000](http://localhost:3000). Available commands:
 
 ```bash
@@ -48,13 +51,13 @@ src/
 │   ├── layout.tsx                    # Root layout and tournament provider
 │   └── page.tsx                      # Home page and tournament list
 ├── features/tournaments/
-│   ├── components/                   # List, wizard, play UI, and components
+│   ├── components/                   # List, wizard, match, scoring, and standings UI
 │   ├── hooks/TournamentProvider.tsx  # Shared state and tournament actions
-│   ├── lib/                          # Rules, scheduling, scoring, and storage
+│   ├── lib/                          # Rules, schedules, scoring, progress, storage
 │   └── types/tournament.ts           # Domain types and error codes
 └── shared/
-    ├── i18n/                         # UI localization configuration and messages
-    └── styles/variables.css          # Global style tokens
+    ├── i18n/                         # Locale configuration and message dictionaries
+    └── styles/variables.css          # Global CSS design tokens
 ```
 
 The `@/` alias points to `src/`, as configured in `tsconfig.json`. Routes may
@@ -66,6 +69,11 @@ Route components are Server Components by default. The provider and interfaces
 that use state, event handlers, or browser APIs are Client Components. The
 provider is mounted in the root layout to share tournament data and mutations
 across routes.
+
+The active locale is Spanish (`es`). Locale configuration and dictionaries live
+in `src/shared/i18n/`; adding a locale requires registering its messages there.
+Global design tokens are in `src/shared/styles/variables.css`, while route and
+feature styles use CSS Modules.
 
 ### Feature responsibilities
 
