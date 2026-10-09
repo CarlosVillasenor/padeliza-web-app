@@ -46,6 +46,11 @@ const backIcon = (
 type Step =
   "type" | "players" | "courts" | "points" | "rounds" | "name" | "review";
 
+/**
+ * Guides users through tournament setup, validates the configuration, and
+ * creates it through the tournament provider. Draft values are held locally
+ * and are discarded if the wizard is left or the page is reloaded.
+ */
 export default function TournamentWizard() {
   const router = useRouter();
   const store = useTournaments();

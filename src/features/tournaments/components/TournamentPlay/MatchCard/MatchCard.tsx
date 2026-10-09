@@ -17,6 +17,11 @@ function formatScore(score: number | null) {
   return score === null ? "–" : String(score).padStart(2, "0");
 }
 
+/**
+ * Displays a court's teams, scores, and result status.
+ * Score buttons are disabled when editing is unavailable and report the
+ * selected team side through `onEditScore`.
+ */
 export default function MatchCard({ match, names, editable, onEditScore }: Props) {
   const done = isMatchComplete(match);
   const teams = [

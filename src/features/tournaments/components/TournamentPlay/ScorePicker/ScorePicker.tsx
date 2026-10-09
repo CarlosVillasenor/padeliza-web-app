@@ -14,6 +14,11 @@ type Props = {
 
 // A modal bottom sheet: the native <dialog> traps focus, handles Escape and
 // returns focus to the score button that opened it.
+/**
+ * Lets the user select one team's score from 0 through `points`.
+ * Reports the selection and closes; the parent owns score persistence and
+ * supplies `current` to mark the existing selection.
+ */
 export default function ScorePicker({
   team,
   points,

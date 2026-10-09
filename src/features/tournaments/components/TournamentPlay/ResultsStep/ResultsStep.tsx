@@ -7,6 +7,10 @@ import styles from "./ResultsStep.module.css";
 const { play: copy } = messages.tournaments;
 
 // Rows use flexbox for even spacing; ARIA roles keep the table semantics.
+/**
+ * Shows final tournament standings and a link back to the tournament list.
+ * Standings are calculated from the completed matches in `tournament`.
+ */
 export default function ResultsStep({ tournament }: { tournament: Tournament }) {
   const standings = computeStandings(tournament);
   return (

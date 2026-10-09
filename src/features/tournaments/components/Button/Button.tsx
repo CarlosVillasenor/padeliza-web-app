@@ -3,6 +3,10 @@ import styles from "./Button.module.css";
 
 type ButtonProps = ComponentPropsWithoutRef<"button">;
 
+/**
+ * Styled native button that accepts standard button props.
+ * Defaults to `type="button"` to avoid accidental form submission.
+ */
 export default function Button({
   children,
   className,

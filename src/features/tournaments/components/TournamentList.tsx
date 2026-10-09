@@ -7,6 +7,11 @@ import styles from "./TournamentList.module.css";
 
 const { formats, errors, status, list: copy } = messages.tournaments;
 
+/**
+ * Lists saved tournaments with their key settings and links to play or create.
+ * Shows loading and retryable error states, and renders the supplied empty state
+ * when there are no saved tournaments.
+ */
 export default function TournamentList({
   emptyState,
 }: {

@@ -12,6 +12,10 @@ type Props = {
   onSelect: (roundNumber: number) => void;
 };
 
+/**
+ * Navigates tournament rounds and indicates whether each is pending, complete,
+ * or not yet generated. Unavailable rounds are disabled.
+ */
 export default function RoundCarousel({ tournament, current, onSelect }: Props) {
   const active = useRef<HTMLButtonElement>(null);
 
