@@ -6,7 +6,8 @@ import type {
 import { isMatchComplete, isValidScore } from "./scoring.ts";
 
 export const tournamentFormats = ["americano", "mexicano"] as const;
-export const playerCounts = [4, 8, 12, 16];
+export const playerCounts = [4, 8, 12];
+export const maxPlayers = Math.max(...playerCounts);
 
 // Each complete partner rotation has N/4 matches. Finish its batches before
 // starting the next rotation; this favors an understandable schedule over packing.
