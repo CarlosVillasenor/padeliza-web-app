@@ -71,6 +71,8 @@ de resultados y la generación de emparejamientos quedan para la siguiente entre
   de datos externos. Clave: `padeliza.tournaments.v2`.
 
 Los torneos se guardan únicamente en localStorage, sin API ni base de datos remota.
+En el listado se pueden eliminar torneos (con confirmación) y exportar o importar una
+copia en JSON. Importar añade los torneos que no existen; no reemplaza los guardados.
 La escritura sucede antes de confirmar el éxito. Si falla, el formulario permanece;
 si los datos guardados están dañados o usan otra versión, no se sobrescriben.
 Las pestañas reciben cambios mediante el evento `storage`; escrituras simultáneas

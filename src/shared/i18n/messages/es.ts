@@ -56,6 +56,7 @@ export const es = {
         "No pudimos leer los torneos guardados. Los datos existentes no se han sobrescrito. Habilita el almacenamiento del navegador y vuelve a intentar.",
       storageNotReady: "Primero debemos recuperar los torneos guardados.",
       tournamentNotFound: "No encontramos este torneo.",
+      importInvalid: "El archivo no es una copia válida de Padeliza.",
       tournamentCompleted: "El torneo ya finalizó y no se puede editar.",
       matchNotFound: "No encontramos ese partido.",
       roundLocked:
@@ -76,6 +77,14 @@ export const es = {
         `${points} puntos totales por partido`,
       viewPlayers: "Ver jugadores",
       create: "+ Crear torneo",
+      deleteButton: "Eliminar torneo",
+      confirmDelete: (name: string) =>
+        `¿Eliminar ${name}? Se borrarán sus partidos y no se puede deshacer.`,
+      confirmDeleteButton: "Sí, eliminar",
+      cancel: "Cancelar",
+      exportButton: "Exportar copia",
+      importLabel: "Importar copia",
+      importDone: "Copia importada. Los torneos que ya estaban guardados no cambiaron.",
     },
     play: {
       backToTournaments: "Volver a torneos",
