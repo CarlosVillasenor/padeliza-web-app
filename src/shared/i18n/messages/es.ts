@@ -36,6 +36,8 @@ export const es = {
     },
     status: {
       scheduled: "Preparado",
+      "in-progress": "En juego",
+      completed: "Finalizado",
     },
     // Keyed by `TournamentError` (see features/tournaments/types).
     errors: {
@@ -53,6 +55,15 @@ export const es = {
       storageUnavailable:
         "No pudimos leer los torneos guardados. Los datos existentes no se han sobrescrito. Habilita el almacenamiento del navegador y vuelve a intentar.",
       storageNotReady: "Primero debemos recuperar los torneos guardados.",
+      tournamentNotFound: "No encontramos este torneo.",
+      tournamentCompleted: "El torneo ya finalizó y no se puede editar.",
+      matchNotFound: "No encontramos ese partido.",
+      roundLocked:
+        "Esta ronda ya no se puede editar porque la siguiente ya fue generada.",
+      invalidScore: "El marcador debe sumar exactamente los puntos del partido.",
+      cannotGenerateRound:
+        "Completa todos los partidos de la ronda para generar la siguiente.",
+      cannotFinish: "Aún faltan partidos o rondas por completar.",
       saveFailed:
         "No se pudo guardar el torneo. Revisa el espacio y los permisos del navegador e inténtalo de nuevo. Tu formulario se conserva.",
     },
@@ -65,6 +76,44 @@ export const es = {
         `${points} puntos totales por partido`,
       viewPlayers: "Ver jugadores",
       create: "+ Crear torneo",
+    },
+    play: {
+      backToTournaments: "Volver a torneos",
+      roundsTitle: "Rondas",
+      roundsNavLabel: "Seleccionar ronda",
+      round: (number: number) => `Ronda ${number}`,
+      roundChipLabel: (number: number, state: "complete" | "pending" | "locked") =>
+        `Ronda ${number}, ${
+          { complete: "terminada", pending: "pendiente", locked: "aún no generada" }[state]
+        }`,
+      court: (number: number) => `Pista ${number}`,
+      versus: "VS",
+      matchDone: "Terminado",
+      matchPending: "Pendiente",
+      scoreUnset: "sin marcador",
+      editScore: (team: string, score: string) =>
+        `Marcador de ${team}: ${score}. Cambiar`,
+      pickerTitle: (team: string) => `Puntos de ${team}`,
+      pickerHint: (points: number) =>
+        `El rival recibe el resto hasta sumar ${points}.`,
+      pickerOption: (value: number) => `${value} puntos`,
+      pickerClose: "Cerrar",
+      and: "y",
+      generateRound: (number: number) => `Generar ronda ${number}`,
+      finish: "Finalizar",
+      pendingMatches: (count: number) =>
+        count === 1 ? "Falta 1 partido por completar." : `Faltan ${count} partidos por completar.`,
+      pendingRounds: (count: number) =>
+        count === 1 ? "Falta generar 1 ronda." : `Faltan generar ${count} rondas.`,
+      resultsTitle: "Resultados",
+      resultsCaption: (name: string) => `Clasificación de ${name}`,
+      position: "Pos.",
+      player: "Jugador",
+      points: "P",
+      pointsFull: "Puntos",
+      home: "Casa",
+      loading: "Cargando torneo…",
+      notFound: "No encontramos este torneo.",
     },
     wizard: {
       title: "Nuevo torneo",
@@ -136,7 +185,7 @@ export const es = {
         americanoNoRests:
           "Una pareja distinta en cada partido. Todos juegan en cada ronda.",
         saveNotice:
-          "El torneo se guardará en este navegador. La captura de resultados estará disponible en una siguiente entrega.",
+          "El torneo se guardará en este navegador. Al crearlo podrás capturar los resultados de cada ronda.",
       },
       // Step-level input problems caught before the domain rules run.
       stepErrors: {

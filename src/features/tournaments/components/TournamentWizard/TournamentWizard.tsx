@@ -137,7 +137,7 @@ export default function TournamentWizard() {
         courts,
         rounds: totalRounds,
       });
-      router.push("/");
+      router.push(`/tournaments/${submissionId.current}`);
       return;
     }
     move(steps[index + 1]);

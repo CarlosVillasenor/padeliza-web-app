@@ -29,7 +29,9 @@ export default function TournamentList({
         <ul className={styles.cards}>
           {tournaments.map((t) => (
             <li key={t.id} className={styles.card}>
-              <h2>{t.name}</h2>
+              <h2>
+                <Link href={`/tournaments/${t.id}`}>{t.name}</Link>
+              </h2>
               <p>
                 {formats[t.format]} · {status[t.status]}
               </p>

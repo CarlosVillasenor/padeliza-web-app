@@ -1,0 +1,96 @@
+.shell {
+  --surface: #fff;
+  --ink: #0c1827;
+  --muted: #526573;
+  --accent: #006356;
+  --border: #cad8d5;
+  display: grid;
+  align-content: start;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 38rem;
+  min-height: 100svh;
+  margin: auto;
+  padding: 1rem;
+  background: var(--surface);
+  color: var(--ink);
+}
+.title {
+  font-size: clamp(1.65rem, 6vw, 2.25rem);
+  line-height: 1.15;
+  text-align: center;
+}
+.caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 0.6rem;
+  background: #f3f5f5;
+}
+.cell {
+  flex: 0 1 auto;
+  min-width: 0;
+  font-weight: 500;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.points {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.head {
+  background: none;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.head .cell {
+  font-weight: 600;
+}
+.first {
+  background: #ffd54a;
+}
+.first .cell {
+  font-weight: 700;
+}
+.table abbr {
+  text-decoration: none;
+}
+.home {
+  display: grid;
+  place-items: center;
+  min-height: 3.25rem;
+  margin-top: 1rem;
+  border-radius: 0.75rem;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+.home:focus-visible {
+  outline: 3px solid #6ba928;
+  outline-offset: 3px;
+}
+@media (min-width: 36rem) {
+  .shell {
+    padding: 2rem;
+  }
+}

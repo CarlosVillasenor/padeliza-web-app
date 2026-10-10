@@ -8,10 +8,31 @@ export type TournamentInput = {
   points: number;
   rounds: number;
 };
+export type TournamentStatus = "scheduled" | "in-progress" | "completed";
+export type Team = readonly [string, string];
+// A score is either unset (both null) or a full result whose total is `points`.
+export type Match = {
+  id: string;
+  court: number;
+  teamA: Team;
+  teamB: Team;
+  scoreA: number | null;
+  scoreB: number | null;
+};
+export type Round = { number: number; matches: Match[] };
 export type Tournament = TournamentInput & {
   id: string;
   createdAt: string;
-  status: "scheduled";
+  status: TournamentStatus;
+  // Americano stores every round up front; Mexicano appends one round at a time.
+  schedule: Round[];
+};
+export type StandingRow = {
+  playerId: string;
+  name: string;
+  points: number;
+  wins: number;
+  position: number;
 };
 
 export type TournamentValidationError =
@@ -31,4 +52,11 @@ export type TournamentError =
   | TournamentValidationError
   | "storageUnavailable"
   | "storageNotReady"
-  | "saveFailed";
+  | "saveFailed"
+  | "tournamentNotFound"
+  | "tournamentCompleted"
+  | "matchNotFound"
+  | "roundLocked"
+  | "invalidScore"
+  | "cannotGenerateRound"
+  | "cannotFinish";
