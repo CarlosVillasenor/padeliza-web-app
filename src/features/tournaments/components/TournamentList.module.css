@@ -26,6 +26,25 @@
   cursor: pointer;
   padding-block: 0.5rem;
 }
+.confirm {
+  margin-top: 0.8rem;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+.deleteButton {
+  margin-top: 0.8rem;
+}
+.importLabel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
 .createLink {
   display: block;
   padding: 1.25rem;
