@@ -24,6 +24,14 @@ test("complete rotations and sequential court batches", () => {
 });
 test("valid input and unsupported or inconsistent configurations", () => {
   assert.equal(validateTournament(input), null);
+  const sixteen = Array.from({ length: 16 }, (_, i) => ({
+    id: String(i),
+    name: `J${i}`,
+  }));
+  assert.equal(
+    validateTournament({ ...input, players: sixteen, courts: 4 }),
+    "playerCount",
+  );
   for (const change of [
     { players: [] },
     { courts: 2 },

@@ -45,27 +45,30 @@ el borrador al volver entre pasos; salir o recargar descarta ese borrador. Al
 confirmar, guarda un torneo en estado `scheduled` y vuelve al listado. La captura
 de resultados y la generación de emparejamientos quedan para la siguiente entrega.
 
-- Americano: 4, 8, 12 o 16 jugadores; de 1 a N/4 pistas. Una rotación contiene N/4
+- Americano: 4, 8 o 12 jugadores; de 1 a N/4 pistas. Una rotación contiene N/4
   partidos y cada jugador tendrá N−1 parejas distintas. Para calcular los turnos,
   se completa cada rotación en lotes de hasta C pistas antes de pasar a la siguiente:
   `(N−1) × ceil((N/4)/C)`. No se promete el calendario más corto posible; por ejemplo,
   12 jugadores y 2 pistas dan 22 turnos, con el último lote de cada rotación parcial.
-  El futuro generador de partidos deberá respetar esta política.
+  El generador (`lib/schedule.ts`) usa un torneo de whist cíclico: cada pareja de
+  jugadores es compañera exactamente una vez y rival exactamente dos veces. Solo
+  existe para 4, 8 y 12 jugadores (N−1 primo, N−1 ≡ 3 mod 4), por eso ese es el máximo.
 - Mexicano: cuatro jugadores por pista, entre 1 y 4 pistas. Rondas elegidas por el
   organizador (1–100). La futura generación usará una primera ronda aleatoria y
   después clasificación en grupos de cuatro (1+4 contra 2+3). Los desempates de
   clasificación deberán acordarse al implementar resultados.
+- Jugadores: el máximo es 12 (4, 8 o 12).
 - Puntuación: suma fija por partido, entre 1 y 100, incluidos empates cuando proceda.
   Las opciones son 8, 16, 24 y 32. Los puntos no determinan las rondas.
 
 ### Dónde trabajar
 
-- `src/features/tournaments/components/TournamentWizard.tsx`: borrador y pasos.
+- `src/features/tournaments/components/TournamentWizard/TournamentWizard.tsx`: borrador y pasos.
 - `src/features/tournaments/lib/rules.ts`: reglas y validación del dominio.
 - `src/features/tournaments/components/TournamentProvider.tsx`: Context + reducer,
   montado en el layout común. Expone `useTournaments()`.
 - `src/features/tournaments/lib/storage.ts`: almacenamiento versionado y validación
-  de datos externos. Clave: `padeliza.tournaments.v1`.
+  de datos externos. Clave: `padeliza.tournaments.v2`.
 
 Los torneos se guardan únicamente en localStorage, sin API ni base de datos remota.
 La escritura sucede antes de confirmar el éxito. Si falla, el formulario permanece;
@@ -77,7 +80,7 @@ implica que el sitio completo funcione sin conexión.
 
 ### Verificación
 
-Con Node 26 (`nvm use`):
+Con Node 24 (`nvm use`):
 
 ```bash
 node --test src/features/tournaments/lib/rules.test.ts
