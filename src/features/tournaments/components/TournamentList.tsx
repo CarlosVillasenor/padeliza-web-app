@@ -48,7 +48,11 @@ export default function TournamentList({
           ))}
         </ul>
       )}
-      <Link className={styles.createLink} href="/tournaments/new">
+      <Link
+        className={styles.createLink}
+        href="/tournaments/new"
+        data-umami-event="tournament-create-started"
+      >
         {copy.create}
       </Link>
     </>

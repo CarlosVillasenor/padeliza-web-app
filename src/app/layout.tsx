@@ -24,6 +24,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <Script
         src="https://cloud.umami.is/script.js"
         data-website-id="80413473-1c26-4836-8dce-f1c93d3ab68b"
+        data-domains="padeliza-web-app.vercel.app"
         strategy="afterInteractive"
       />
     </html>
