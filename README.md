@@ -82,7 +82,7 @@ implica que el sitio completo funcione sin conexión.
 
 ### Verificación
 
-Con Node 26 (`nvm use`):
+Con Node 24 (`nvm use`):
 
 ```bash
 node --test src/features/tournaments/lib/rules.test.ts
