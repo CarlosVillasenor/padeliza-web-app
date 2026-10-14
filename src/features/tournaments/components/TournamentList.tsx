@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { FaRegTrashCan } from "react-icons/fa6";
 import { useState, type ReactNode } from "react";
 import Button from "@/shared/components/Button/Button";
 import { messages } from "@/shared/i18n";
@@ -70,9 +71,11 @@ export default function TournamentList({
               ) : (
                 <Button
                   className={styles.deleteButton}
+                  aria-label={copy.deleteButton(t.name)}
+                  title={copy.deleteButton(t.name)}
                   onClick={() => setPendingDeleteId(t.id)}
                 >
-                  {copy.deleteButton}
+                  <FaRegTrashCan aria-hidden="true" />
                 </Button>
               )}
             </li>

@@ -76,7 +76,7 @@ export const es = {
         `${points} puntos totales por partido`,
       viewPlayers: "Ver jugadores",
       create: "+ Crear torneo",
-      deleteButton: "Eliminar torneo",
+      deleteButton: (name: string) => `Eliminar torneo ${name}`,
       confirmDelete: (name: string) =>
         `¿Eliminar ${name}? Se borrarán sus partidos y no se puede deshacer.`,
       confirmDeleteButton: "Sí, eliminar",
