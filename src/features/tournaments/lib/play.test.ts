@@ -54,7 +54,7 @@ test("americano schedule matches the round count and repeats no partner", () => 
     [8, 1],
     [8, 2],
     [12, 2],
-    [16, 3],
+    [12, 3],
   ]) {
     const t = build(players, courts);
     assert.equal(t.schedule.length, americanoRounds(players, courts));

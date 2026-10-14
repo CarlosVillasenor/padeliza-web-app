@@ -1,4 +1,5 @@
 import { locale, messages } from "@/shared/i18n";
+import { maxPlayers } from "../../../../lib/rules";
 import type { Player } from "../../../../types/tournament";
 import shared from "../../shared.module.css";
 import styles from "./PlayersStep.module.css";
@@ -23,7 +24,7 @@ export default function PlayersStep({
   function addPlayer() {
     const trimmed = playerName.trim();
     if (!trimmed) return onError(stepErrors.playerNameRequired);
-    if (players.length >= 16) return onError(stepErrors.maxPlayers);
+    if (players.length >= maxPlayers) return onError(stepErrors.maxPlayers);
     if (
       players.some(
         (p) =>
