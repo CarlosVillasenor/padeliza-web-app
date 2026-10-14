@@ -37,11 +37,11 @@
 }
 /* Element selector outranks the shared Button's size so this stays a compact icon button. */
 button.deleteButton {
-  width: 3.2rem;
-  min-height: 3.2rem;
-  margin-top: 0.8rem;
-  border-radius: 0.8rem;
-  font-size: 1.4rem;
+  width: 2.75rem;
+  min-height: 2.75rem;
+  margin: 0.8rem 0 0 auto;
+  border-radius: 0.6rem;
+  font-size: 1.2rem;
 }
 .createLink {
   display: block;
