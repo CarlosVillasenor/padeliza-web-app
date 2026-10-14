@@ -60,10 +60,16 @@ export default function TournamentList({
                 <div className={styles.confirm}>
                   <p>{copy.confirmDelete(t.name)}</p>
                   <div className={styles.actions}>
-                    <Button onClick={() => removeTournament(t.id)}>
+                    <Button
+                      className={styles.confirmButton}
+                      onClick={() => removeTournament(t.id)}
+                    >
                       {copy.confirmDeleteButton}
                     </Button>
-                    <Button onClick={() => setPendingDeleteId(null)}>
+                    <Button
+                      className={styles.confirmButton}
+                      onClick={() => setPendingDeleteId(null)}
+                    >
                       {copy.cancel}
                     </Button>
                   </div>
