@@ -43,7 +43,7 @@ export const es = {
     errors: {
       name: "Escribe un nombre de hasta 80 caracteres.",
       format: "Selecciona un tipo de torneo válido.",
-      playerCount: "Agrega 4, 8, 12 o 16 jugadores.",
+      playerCount: "Agrega 4, 8 o 12 jugadores.",
       playerName: "Cada jugador necesita un nombre de hasta 50 caracteres.",
       duplicatePlayerName: "Los nombres de los jugadores deben ser distintos.",
       duplicatePlayerId: "Los identificadores de jugadores deben ser únicos.",
@@ -76,6 +76,11 @@ export const es = {
         `${points} puntos totales por partido`,
       viewPlayers: "Ver jugadores",
       create: "+ Crear torneo",
+      deleteButton: (name: string) => `Eliminar torneo ${name}`,
+      confirmDelete: (name: string) =>
+        `¿Eliminar ${name}? Se borrarán sus partidos y no se puede deshacer.`,
+      confirmDeleteButton: "Sí, eliminar",
+      cancel: "Cancelar",
     },
     play: {
       backToTournaments: "Volver a torneos",
@@ -139,7 +144,7 @@ export const es = {
         legend: "Modalidad",
       },
       players: {
-        intro: "Agrega 4, 8, 12 o 16 jugadores. Cada nombre debe ser distinto.",
+        intro: "Agrega 4, 8 o 12 jugadores. Cada nombre debe ser distinto.",
         inputLabel: "Añadir jugador",
         addButton: "Añadir jugador",
         added: (count: number) => `${count} jugadores agregados`,
@@ -190,12 +195,12 @@ export const es = {
       // Step-level input problems caught before the domain rules run.
       stepErrors: {
         playerNameRequired: "Escribe el nombre del jugador.",
-        maxPlayers: "Puedes agregar hasta 16 jugadores.",
+        maxPlayers: "Puedes agregar hasta 12 jugadores.",
         duplicatePlayer:
           "Ese jugador ya está en la lista. Usa un nombre distinto para identificarlo.",
         pendingPlayerName:
           "Presiona + para agregar el nombre pendiente o borra el campo antes de continuar.",
-        unsupportedPlayerCount: "Esta versión admite 4, 8, 12 o 16 jugadores.",
+        unsupportedPlayerCount: "Esta versión admite 4, 8 o 12 jugadores.",
         pointsRange: "Escribe entre 1 y 100 puntos.",
         roundsRange: "Escribe entre 1 y 100 rondas.",
         nameRequired: "Escribe el nombre del torneo.",

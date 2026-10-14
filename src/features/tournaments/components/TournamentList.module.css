@@ -26,6 +26,30 @@
   cursor: pointer;
   padding-block: 0.5rem;
 }
+.confirm {
+  margin-top: 0.8rem;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+button.confirmButton {
+  width: auto;
+  min-height: 2.75rem;
+  padding-inline: 1rem;
+  border-radius: 0.6rem;
+  font-size: 1rem;
+}
+/* Element selector outranks the shared Button's size so this stays a compact icon button. */
+button.deleteButton {
+  width: 2.75rem;
+  min-height: 2.75rem;
+  margin: 0.8rem 0 0 auto;
+  border-radius: 0.6rem;
+  font-size: 1.2rem;
+}
 .createLink {
   display: block;
   padding: 1.25rem;

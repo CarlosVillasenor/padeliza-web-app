@@ -53,6 +53,7 @@ const TournamentContext = createContext<
       ) => TournamentError | null;
       generateNextRound: (tournamentId: string) => TournamentError | null;
       finishTournament: (tournamentId: string) => TournamentError | null;
+      deleteTournament: (tournamentId: string) => TournamentError | null;
       reload: () => void;
     })
   | null
@@ -147,6 +148,20 @@ export function TournamentProvider({ children }: { children: ReactNode }) {
     updateTournament(tournamentId, addNextRound);
   const finishTournament = (tournamentId: string) =>
     updateTournament(tournamentId, completeTournament);
+  function deleteTournament(tournamentId: string): TournamentError | null {
+    if (!state.ready || state.error) return "storageNotReady";
+    try {
+      const current = decodeTournaments(localStorage.getItem(STORAGE_KEY));
+      if (!current.some((t) => t.id === tournamentId))
+        return "tournamentNotFound";
+      const tournaments = current.filter((t) => t.id !== tournamentId);
+      localStorage.setItem(STORAGE_KEY, encodeTournaments(tournaments));
+      dispatch({ type: "loaded", tournaments });
+      return null;
+    } catch {
+      return "saveFailed";
+    }
+  }
   return (
     <TournamentContext.Provider
       value={{
@@ -155,6 +170,7 @@ export function TournamentProvider({ children }: { children: ReactNode }) {
         setScore,
         generateNextRound,
         finishTournament,
+        deleteTournament,
         reload,
       }}
     >
