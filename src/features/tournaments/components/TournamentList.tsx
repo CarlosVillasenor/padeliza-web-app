@@ -1,9 +1,8 @@
 "use client";
 import Link from "next/link";
-import { useState, type ChangeEvent, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import Button from "@/shared/components/Button/Button";
 import { messages } from "@/shared/i18n";
-import { decodeTournaments, encodeTournaments } from "../lib/storage";
 import { useTournaments } from "./TournamentProvider";
 import styles from "./TournamentList.module.css";
 
@@ -14,17 +13,10 @@ export default function TournamentList({
 }: {
   emptyState: ReactNode;
 }) {
-  const {
-    tournaments,
-    ready,
-    error,
-    reload,
-    deleteTournament,
-    importTournaments,
-  } = useTournaments();
+  const { tournaments, ready, error, reload, deleteTournament } =
+    useTournaments();
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
   if (!ready) return <p role="status">{copy.loading}</p>;
   if (error)
     return (
@@ -37,34 +29,7 @@ export default function TournamentList({
   function removeTournament(tournamentId: string) {
     const failure = deleteTournament(tournamentId);
     setPendingDeleteId(null);
-    setNotice(null);
     setActionError(failure ? errors[failure] : null);
-  }
-
-  function exportBackup() {
-    const blob = new Blob([encodeTournaments(tournaments)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `padeliza-copia-${new Date().toISOString().slice(0, 10)}.json`;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  }
-
-  async function importBackup(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    if (!file) return;
-    try {
-      const failure = importTournaments(decodeTournaments(await file.text()));
-      setActionError(failure ? errors[failure] : null);
-      setNotice(failure ? null : copy.importDone);
-    } catch {
-      setNotice(null);
-      setActionError(errors.importInvalid);
-    }
   }
 
   return (
@@ -115,20 +80,6 @@ export default function TournamentList({
         </ul>
       )}
       {actionError && <p role="alert">{actionError}</p>}
-      {notice && <p role="status">{notice}</p>}
-      <div className={styles.actions}>
-        <Button onClick={exportBackup} disabled={tournaments.length === 0}>
-          {copy.exportButton}
-        </Button>
-        <label className={styles.importLabel}>
-          {copy.importLabel}
-          <input
-            type="file"
-            accept="application/json,.json"
-            onChange={importBackup}
-          />
-        </label>
-      </div>
       <Link className={styles.createLink} href="/tournaments/new">
         {copy.create}
       </Link>
