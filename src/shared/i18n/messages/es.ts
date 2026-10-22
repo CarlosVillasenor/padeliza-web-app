@@ -43,12 +43,12 @@ export const es = {
     errors: {
       name: "Escribe un nombre de hasta 80 caracteres.",
       format: "Selecciona un tipo de torneo válido.",
-      playerCount: "Agrega 4, 8 o 12 jugadores.",
+      playerCount: "El torneo requiere entre 4 y 24 jugadores.",
       playerName: "Cada jugador necesita un nombre de hasta 50 caracteres.",
       duplicatePlayerName: "Los nombres de los jugadores deben ser distintos.",
       duplicatePlayerId: "Los identificadores de jugadores deben ser únicos.",
       courts: "Selecciona una cantidad válida de pistas.",
-      mexicanoCourts: "Mexicano necesita cuatro jugadores por pista.",
+      mexicanoCourts: "Mexicano admite grupos de cuatro, hasta 12 jugadores.",
       points: "Elige entre 1 y 100 puntos totales por partido.",
       rounds: "Elige entre 1 y 100 rondas.",
       roundsMismatch: "El número de rondas no corresponde a la configuración.",
@@ -92,6 +92,8 @@ export const es = {
           { complete: "terminada", pending: "pendiente", locked: "aún no generada" }[state]
         }`,
       court: (number: number) => `Pista ${number}`,
+      restingPlayers: (names: string[]) =>
+        `${names.length === 1 ? "Descansa" : "Descansan"}: ${names.join(", ")}`,
       versus: "VS",
       matchDone: "Terminado",
       matchPending: "Pendiente",
@@ -144,7 +146,10 @@ export const es = {
         legend: "Modalidad",
       },
       players: {
-        intro: "Agrega 4, 8 o 12 jugadores. Cada nombre debe ser distinto.",
+        introAmericano:
+          "Agrega entre 4 y 24 jugadores para Americano. Cada nombre debe ser distinto.",
+        introMexicano:
+          "Agrega entre 4 y 12 jugadores, en grupos de cuatro, para Mexicano. Cada nombre debe ser distinto.",
         inputLabel: "Añadir jugador",
         addButton: "Añadir jugador",
         added: (count: number) => `${count} jugadores agregados`,
@@ -154,7 +159,7 @@ export const es = {
         introMexicano: (players: number, courts: number) =>
           `Para ${players} jugadores necesitas ${courts} pistas: todos juegan en cada ronda.`,
         introAmericano:
-          "¿Cuántas pistas usarás? Con menos pistas habrá turnos de descanso.",
+          "¿Cuántas pistas usarás? Con menos pistas habrá turnos de descanso. Cada ronda asigna un partido por pista.",
         legend: "Pistas disponibles",
       },
       points: {
@@ -186,21 +191,22 @@ export const es = {
         rounds: "Rondas",
         matchesPerPlayer: "Partidos por jugador",
         americanoWithRests:
-          "Una pareja distinta en cada partido. Habrá descansos: completamos cada rotación por turnos antes de la siguiente.",
+          "Las parejas no se repiten y los descansos se distribuyen de forma equilibrada. Los rivales pueden repetirse o no cruzarse; no todos los tamaños permiten una rotación perfecta.",
         americanoNoRests:
-          "Una pareja distinta en cada partido. Todos juegan en cada ronda.",
+          "Las parejas no se repiten. Los rivales pueden repetirse o no cruzarse; no todos los tamaños permiten una rotación perfecta.",
         saveNotice:
           "El torneo se guardará en este navegador. Al crearlo podrás capturar los resultados de cada ronda.",
       },
       // Step-level input problems caught before the domain rules run.
       stepErrors: {
         playerNameRequired: "Escribe el nombre del jugador.",
-        maxPlayers: "Puedes agregar hasta 12 jugadores.",
+        maxPlayers: (count: number) => `Puedes agregar hasta ${count} jugadores.`,
         duplicatePlayer:
           "Ese jugador ya está en la lista. Usa un nombre distinto para identificarlo.",
         pendingPlayerName:
           "Presiona + para agregar el nombre pendiente o borra el campo antes de continuar.",
-        unsupportedPlayerCount: "Esta versión admite 4, 8 o 12 jugadores.",
+        unsupportedPlayerCount:
+          "Agrega entre 4 y 24 jugadores para Americano o grupos de cuatro hasta 12 para Mexicano.",
         pointsRange: "Escribe entre 1 y 100 puntos.",
         roundsRange: "Escribe entre 1 y 100 rondas.",
         nameRequired: "Escribe el nombre del torneo.",

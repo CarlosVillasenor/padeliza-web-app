@@ -1,4 +1,5 @@
 import { messages } from "@/shared/i18n";
+import { americanoPlayerMatchRange } from "../../../../lib/rules";
 import type { TournamentInput } from "../../../../types/tournament";
 import shared from "../../shared.module.css";
 import styles from "./ReviewStep.module.css";
@@ -8,6 +9,11 @@ const copy = wizard.review;
 
 export default function ReviewStep({ input }: { input: TournamentInput }) {
   const { name, format, players, courts, points, rounds } = input;
+  const [minMatches, maxMatches] = americanoPlayerMatchRange(players.length);
+  const matchesPerPlayer =
+    format === "americano" && minMatches !== maxMatches
+      ? `${minMatches}–${maxMatches}`
+      : String(format === "americano" ? minMatches : rounds);
   return (
     <>
       <dl className={styles.summary}>
@@ -26,9 +32,7 @@ export default function ReviewStep({ input }: { input: TournamentInput }) {
         <dt className={styles.term}>{copy.rounds}</dt>
         <dd className={styles.value}>{rounds}</dd>
         <dt className={styles.term}>{copy.matchesPerPlayer}</dt>
-        <dd className={styles.value}>
-          {format === "americano" ? players.length - 1 : rounds}
-        </dd>
+        <dd className={styles.value}>{matchesPerPlayer}</dd>
       </dl>
       {format === "americano" && (
         <p className={shared.intro}>

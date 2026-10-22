@@ -45,6 +45,13 @@
 .roundTitle {
   font-size: 1.1rem;
 }
+.bye {
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  background: #f1f6f4;
+  color: var(--muted);
+  text-align: center;
+}
 .matches {
   display: grid;
   gap: 1rem;
