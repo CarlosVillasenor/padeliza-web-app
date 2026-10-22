@@ -1,12 +1,13 @@
 import { locale, messages } from "@/shared/i18n";
-import { maxPlayers } from "../../../../lib/rules";
-import type { Player } from "../../../../types/tournament";
+import type { Player, TournamentFormat } from "../../../../types/tournament";
 import shared from "../../shared.module.css";
 import styles from "./PlayersStep.module.css";
 
 const { stepErrors, players: copy } = messages.tournaments.wizard;
 
 type PlayersStepProps = {
+  format: TournamentFormat;
+  maxPlayers: number;
   players: Player[];
   playerName: string;
   onPlayersChange: (players: Player[]) => void;
@@ -15,6 +16,8 @@ type PlayersStepProps = {
 };
 
 export default function PlayersStep({
+  format,
+  maxPlayers,
   players,
   playerName,
   onPlayersChange,
@@ -24,7 +27,8 @@ export default function PlayersStep({
   function addPlayer() {
     const trimmed = playerName.trim();
     if (!trimmed) return onError(stepErrors.playerNameRequired);
-    if (players.length >= maxPlayers) return onError(stepErrors.maxPlayers);
+    if (players.length >= maxPlayers)
+      return onError(stepErrors.maxPlayers(maxPlayers));
     if (
       players.some(
         (p) =>
@@ -40,7 +44,9 @@ export default function PlayersStep({
 
   return (
     <>
-      <p className={shared.intro}>{copy.intro}</p>
+      <p className={shared.intro}>
+        {format === "americano" ? copy.introAmericano : copy.introMexicano}
+      </p>
       <label htmlFor="player">{copy.inputLabel}</label>
       <div className={shared.row}>
         <input

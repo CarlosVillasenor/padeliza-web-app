@@ -38,28 +38,32 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-## Creación de torneos (primera versión)
+## Creación y juego de torneos
 
-Abre `/tournaments/new` o pulsa **Crear torneo** en el inicio. El formulario mantiene
-el borrador al volver entre pasos; salir o recargar descarta ese borrador. Al
-confirmar, guarda un torneo en estado `scheduled` y vuelve al listado. La captura
-de resultados y la generación de emparejamientos quedan para la siguiente entrega.
+Abre `/tournaments/new` o pulsa **Crear torneo** en el inicio. El formulario
+mantiene el borrador al volver entre pasos; salir o recargar descarta ese borrador.
+Los torneos y resultados se guardan en localStorage.
 
-- Americano: 4, 8 o 12 jugadores; de 1 a N/4 pistas. Una rotación contiene N/4
-  partidos y cada jugador tendrá N−1 parejas distintas. Para calcular los turnos,
-  se completa cada rotación en lotes de hasta C pistas antes de pasar a la siguiente:
-  `(N−1) × ceil((N/4)/C)`. No se promete el calendario más corto posible; por ejemplo,
-  12 jugadores y 2 pistas dan 22 turnos, con el último lote de cada rotación parcial.
-  El generador (`lib/schedule.ts`) usa un torneo de whist cíclico: cada pareja de
-  jugadores es compañera exactamente una vez y rival exactamente dos veces. Solo
-  existe para 4, 8 y 12 jugadores (N−1 primo, N−1 ≡ 3 mod 4), por eso ese es el máximo.
-- Mexicano: cuatro jugadores por pista, entre 1 y 4 pistas. Rondas elegidas por el
-  organizador (1–100). La futura generación usará una primera ronda aleatoria y
-  después clasificación en grupos de cuatro (1+4 contra 2+3). Los desempates de
-  clasificación deberán acordarse al implementar resultados.
-- Jugadores: el máximo es 12 (4, 8 o 12).
-- Puntuación: suma fija por partido, entre 1 y 100, incluidos empates cuando proceda.
-  Las opciones son 8, 16, 24 y 32. Los puntos no determinan las rondas.
+- **Americano:** de 4 a 24 jugadores y de 1 a `floor(N/4)` pistas. Las rondas se
+  generan completas al crear el torneo. El número de turnos es
+  `(N par ? N−1 : N) × ceil(floor(N/4)/C)`, procesando cada rotación en lotes de
+  hasta C pistas. Un descanso es una ausencia, no un partido ni una victoria.
+  Para 4, 5, 8 y 12 jugadores se conserva la rotación existente: todos los
+  compañeros son distintos; para 4, 5, 8 y 12 cada pareja de rivales también
+  se enfrenta exactamente dos veces.
+- Para los demás tamaños se usa una factorización circular de parejas: ninguna
+  pareja de compañeros se repite y los partidos jugados por participante difieren
+  como máximo en uno. Los rivales se agrupan para minimizar repeticiones dentro
+  de cada rotación, pero no se garantiza que todas las parejas de rivales se
+  enfrenten un número idéntico de veces (o que todas lleguen a enfrentarse).
+- **Mexicano:** conserva el límite de 4, 8 o 12 jugadores, con cuatro jugadores
+  por pista. El organizador elige de 1 a 100 rondas; las rondas siguientes se
+  organizan por clasificación en grupos de cuatro (1+4 contra 2+3).
+- **Jugadores:** se requieren al menos 4; Americano admite hasta 24 y Mexicano
+  hasta 12. Los nombres deben ser distintos.
+- **Puntuación:** suma fija por partido, entre 1 y 100, incluidos empates cuando
+  proceda. Las opciones son 8, 16, 24 y 32. Los descansos no suman puntos ni
+  afectan la clasificación individual.
 
 ### Dónde trabajar
 
@@ -84,13 +88,16 @@ implica que el sitio completo funcione sin conexión.
 Con Node 24 (`nvm use`):
 
 ```bash
-node --test src/features/tournaments/lib/rules.test.ts
+npm test
 npm run lint
+npx tsc --noEmit
 npm run build
 ```
 
-Prueba manual: crear un Americano de cuatro jugadores, retroceder entre pasos,
-confirmar tres rondas, crear y recargar el listado. Repetir con Mexicano, verificando
-cuatro jugadores por pista y número de rondas editable. Comprobar nombres duplicados,
-valores vacíos y puntuaciones inválidas. Si el almacenamiento está bloqueado o lleno,
-no debe aparecer una confirmación de guardado ni perderse lo escrito.
+Las pruebas de `schedule.test.ts` y `play.test.ts` verifican tamaños de Americano
+de 4 a 24, rotaciones, descansos, puntuaciones y clasificación. Prueba manual:
+crear un Americano con un tamaño no divisible por cuatro y comprobar los descansos;
+capturar resultados y verificar que nadie recibe puntos por descansar. Repetir
+con Mexicano, comprobando cuatro jugadores por pista y rondas editables. Si el
+almacenamiento está bloqueado o lleno, no debe aparecer una confirmación de guardado
+ni perderse lo escrito.

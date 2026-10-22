@@ -22,9 +22,27 @@ test("complete rotations and sequential court batches", () => {
   }
   assert.equal(americanoRounds(5, 1), 5);
   assert.equal(americanoRounds(12, 2), 22);
+  assert.equal(americanoRounds(9, 2), 9);
+  assert.equal(americanoRounds(24, 1), 138);
 });
 test("valid input and unsupported or inconsistent configurations", () => {
   assert.equal(validateTournament(input), null);
+  for (let playerCount = 4; playerCount <= 24; playerCount++) {
+    const players = Array.from({ length: playerCount }, (_, i) => ({
+      id: `range-${playerCount}-${i}`,
+      name: `Jugador ${i}`,
+    }));
+    const courts = Math.floor(playerCount / 4);
+    assert.equal(
+      validateTournament({
+        ...input,
+        players,
+        courts,
+        rounds: americanoRounds(playerCount, courts),
+      }),
+      null,
+    );
+  }
   const five: TournamentInput = {
     ...input,
     players: Array.from({ length: 5 }, (_, i) => ({
@@ -38,13 +56,49 @@ test("valid input and unsupported or inconsistent configurations", () => {
     validateTournament({ ...five, format: "mexicano" }),
     "mexicanoCourts",
   );
-  const sixteen = Array.from({ length: 16 }, (_, i) => ({
-    id: String(i),
-    name: `J${i}`,
-  }));
+  const sixteen: TournamentInput = {
+    ...input,
+    players: Array.from({ length: 16 }, (_, i) => ({
+      id: String(i),
+      name: `J${i}`,
+    })),
+    courts: 4,
+    rounds: americanoRounds(16, 4),
+  };
+  assert.equal(validateTournament(sixteen), null);
   assert.equal(
-    validateTournament({ ...input, players: sixteen, courts: 4 }),
+    validateTournament({
+      ...sixteen,
+      format: "mexicano",
+      courts: 4,
+      rounds: 10,
+    }),
+    "mexicanoCourts",
+  );
+  assert.equal(
+    validateTournament({
+      ...input,
+      players: Array.from({ length: 3 }, (_, i) => ({
+        id: String(i),
+        name: `J${i}`,
+      })),
+    }),
     "playerCount",
+  );
+  assert.equal(
+    validateTournament({
+      ...input,
+      players: Array.from({ length: 25 }, (_, i) => ({
+        id: String(i),
+        name: `J${i}`,
+      })),
+      rounds: 200,
+    }),
+    "playerCount",
+  );
+  assert.equal(
+    validateTournament({ ...five, courts: 2 }),
+    "courts",
   );
   for (const change of [
     { players: [] },
@@ -114,4 +168,25 @@ test("storage round trip, empty, corrupted, unsupported versions and duplicates"
     }),
   ])
     assert.throws(() => decodeTournaments(raw));
+
+  const ninePlayerInput = {
+    ...input,
+    players: Array.from({ length: 9 }, (_, i) => ({
+      id: `nine-${i}`,
+      name: `Jugador ${i}`,
+    })),
+    courts: 2,
+    rounds: americanoRounds(9, 2),
+  };
+  const ninePlayerTournament: Tournament = {
+    ...ninePlayerInput,
+    id: "nine-player",
+    createdAt: new Date().toISOString(),
+    status: "scheduled",
+    schedule: createInitialSchedule(ninePlayerInput),
+  };
+  assert.deepEqual(
+    decodeTournaments(encodeTournaments([ninePlayerTournament])),
+    [ninePlayerTournament],
+  );
 });

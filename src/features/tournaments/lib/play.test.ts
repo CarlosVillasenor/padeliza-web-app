@@ -152,6 +152,31 @@ test("five-player byes do not count as matches or award automatic standings", ()
   assert.ok(canFinishTournament(t));
 });
 
+test("general Americano byes do not score and rankings include played matches only", () => {
+  let t = build(7, 1);
+  const appearances = new Map(t.players.map(({ id }) => [id, 0]));
+  for (const round of t.schedule)
+    for (const match of round.matches) {
+      for (const id of [...match.teamA, ...match.teamB])
+        appearances.set(id, appearances.get(id)! + 1);
+      const scored = recordScore(t, match.id, 8, 8);
+      assert.ok(scored.ok);
+      t = scored.tournament;
+    }
+
+  assert.equal(pendingMatches(t), 0);
+  const standings = new Map(
+    computeStandings(t).map((row) => [row.playerId, row]),
+  );
+  for (const [playerId, played] of appearances)
+    assert.equal(standings.get(playerId)?.points, played * 8);
+  assert.equal(
+    [...standings.values()].reduce((total, row) => total + row.points, 0),
+    t.schedule.reduce((total, round) => total + round.matches.length * 32, 0),
+  );
+  assert.ok(canFinishTournament(t));
+});
+
 test("mexicano generates one round at a time from results", () => {
   let t = build(8, 2, "mexicano", 2);
   assert.equal(t.schedule.length, 1);

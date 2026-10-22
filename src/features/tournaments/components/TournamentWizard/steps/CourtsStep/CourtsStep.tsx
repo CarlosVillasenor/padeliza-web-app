@@ -28,7 +28,10 @@ export default function CourtsStep({
       <fieldset className={shared.fieldset}>
         <legend className={shared.legend}>{copy.legend}</legend>
         <div className={shared.choices}>
-          {[1, 2, 3, 4].map((value) => (
+          {Array.from(
+            { length: Math.floor(maxCourts) },
+            (_, index) => index + 1,
+          ).map((value) => (
             <label className={shared.option} key={value}>
               <input
                 type="radio"

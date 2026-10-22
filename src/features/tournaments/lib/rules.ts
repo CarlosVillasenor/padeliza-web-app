@@ -6,14 +6,34 @@ import type {
 import { isMatchComplete, isValidScore } from "./scoring.ts";
 
 export const tournamentFormats = ["americano", "mexicano"] as const;
-export const playerCounts = [4, 5, 8, 12];
-export const maxPlayers = Math.max(...playerCounts);
+export const minPlayers = 4;
+// At 24 players the schedule search is bounded to 12 partner teams per rotation.
+export const maxPlayers = 24;
+export const maxMexicanoPlayers = 12;
+const maxMexicanoRounds = 100;
 
-// Five-player rounds pair one match with a different bye; other sizes use full
-// partner rotations with N/4 matches, batched before the next rotation starts.
+export function isValidPlayerCount(players: number): boolean {
+  return Number.isInteger(players) && players >= minPlayers && players <= maxPlayers;
+}
+
+// Even counts have N-1 partnership rounds; odd counts need N rounds so every
+// participant receives one bye in the round-robin factorization.
 export function americanoRounds(players: number, courts: number): number {
-  if (players === 5) return 5;
-  return (players - 1) * Math.ceil(players / 4 / courts);
+  if (players < minPlayers || courts < 1) return 0;
+  const rotations = players % 2 === 0 ? players - 1 : players;
+  return rotations * Math.ceil(Math.floor(players / 4) / courts);
+}
+
+export function americanoPlayerMatchRange(
+  players: number,
+): readonly [number, number] {
+  if (players < minPlayers) return [0, 0];
+  const rotations = players % 2 === 0 ? players - 1 : players;
+  const totalAppearances = rotations * Math.floor(players / 4) * 4;
+  return [
+    Math.floor(totalAppearances / players),
+    Math.ceil(totalAppearances / players),
+  ];
 }
 
 export function validateTournament(
@@ -21,7 +41,12 @@ export function validateTournament(
 ): TournamentValidationError | null {
   if (!input.name.trim() || input.name.trim().length > 80) return "name";
   if (!tournamentFormats.includes(input.format)) return "format";
-  if (!playerCounts.includes(input.players.length)) return "playerCount";
+  if (!isValidPlayerCount(input.players.length)) return "playerCount";
+  if (
+    input.format === "mexicano" &&
+    (input.players.length > maxMexicanoPlayers || input.players.length % 4 !== 0)
+  )
+    return "mexicanoCourts";
   const names = input.players.map((player) =>
     player.name.trim().toLocaleLowerCase("es"),
   );
@@ -38,11 +63,22 @@ export function validateTournament(
     input.courts > input.players.length / 4
   )
     return "courts";
-  if (input.format === "mexicano" && input.players.length !== input.courts * 4)
+  if (
+    input.format === "mexicano" &&
+    input.players.length !== input.courts * 4
+  )
     return "mexicanoCourts";
   if (!Number.isInteger(input.points) || input.points < 1 || input.points > 100)
     return "points";
-  if (!Number.isInteger(input.rounds) || input.rounds < 1 || input.rounds > 100)
+  const maxRounds =
+    input.format === "americano"
+      ? americanoRounds(input.players.length, 1)
+      : maxMexicanoRounds;
+  if (
+    !Number.isInteger(input.rounds) ||
+    input.rounds < 1 ||
+    input.rounds > maxRounds
+  )
     return "rounds";
   if (
     input.format === "americano" &&

@@ -7,7 +7,9 @@ import Button from "@/shared/components/Button/Button";
 import { messages } from "@/shared/i18n";
 import {
   americanoRounds,
-  playerCounts,
+  isValidPlayerCount,
+  maxMexicanoPlayers,
+  maxPlayers,
   validateTournament,
 } from "../../lib/rules";
 import type {
@@ -95,11 +97,13 @@ export default function TournamentWizard() {
     event.preventDefault();
     if (step === "players") {
       if (playerName.trim()) return setError(copy.stepErrors.pendingPlayerName);
-      if (
-        !playerCounts.includes(players.length) ||
-        (format === "mexicano" && players.length % 4 !== 0)
-      )
+      if (!isValidPlayerCount(players.length))
         return setError(copy.stepErrors.unsupportedPlayerCount);
+      if (
+        format === "mexicano" &&
+        (players.length % 4 !== 0 || players.length > maxMexicanoPlayers)
+      )
+        return setError(errors.mexicanoCourts);
       setCourts(
         format === "mexicano"
           ? players.length / 4
@@ -177,6 +181,10 @@ export default function TournamentWizard() {
         )}
         {step === "players" && (
           <PlayersStep
+            format={format}
+            maxPlayers={
+              format === "mexicano" ? maxMexicanoPlayers : maxPlayers
+            }
             players={players}
             playerName={playerName}
             onPlayersChange={setPlayers}
