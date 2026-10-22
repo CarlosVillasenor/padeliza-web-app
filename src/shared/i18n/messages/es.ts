@@ -43,7 +43,8 @@ export const es = {
     errors: {
       name: "Escribe un nombre de hasta 80 caracteres.",
       format: "Selecciona un tipo de torneo válido.",
-      playerCount: "Agrega 4, 8 o 12 jugadores.",
+      playerCount:
+        "Americano admite 4, 5, 8 o 12 jugadores. Mexicano requiere grupos de cuatro.",
       playerName: "Cada jugador necesita un nombre de hasta 50 caracteres.",
       duplicatePlayerName: "Los nombres de los jugadores deben ser distintos.",
       duplicatePlayerId: "Los identificadores de jugadores deben ser únicos.",
@@ -92,6 +93,8 @@ export const es = {
           { complete: "terminada", pending: "pendiente", locked: "aún no generada" }[state]
         }`,
       court: (number: number) => `Pista ${number}`,
+      restingPlayers: (names: string[]) =>
+        `${names.length === 1 ? "Descansa" : "Descansan"}: ${names.join(", ")}`,
       versus: "VS",
       matchDone: "Terminado",
       matchPending: "Pendiente",
@@ -144,7 +147,8 @@ export const es = {
         legend: "Modalidad",
       },
       players: {
-        intro: "Agrega 4, 8 o 12 jugadores. Cada nombre debe ser distinto.",
+        intro:
+          "Agrega 4, 5, 8 o 12 jugadores. Mexicano requiere grupos de cuatro. Cada nombre debe ser distinto.",
         inputLabel: "Añadir jugador",
         addButton: "Añadir jugador",
         added: (count: number) => `${count} jugadores agregados`,
@@ -200,7 +204,8 @@ export const es = {
           "Ese jugador ya está en la lista. Usa un nombre distinto para identificarlo.",
         pendingPlayerName:
           "Presiona + para agregar el nombre pendiente o borra el campo antes de continuar.",
-        unsupportedPlayerCount: "Esta versión admite 4, 8 o 12 jugadores.",
+        unsupportedPlayerCount:
+          "Americano admite 4, 5, 8 o 12 jugadores. Mexicano requiere grupos de cuatro.",
         pointsRange: "Escribe entre 1 y 100 puntos.",
         roundsRange: "Escribe entre 1 y 100 rondas.",
         nameRequired: "Escribe el nombre del torneo.",

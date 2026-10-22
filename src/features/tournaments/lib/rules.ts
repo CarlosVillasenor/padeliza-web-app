@@ -6,12 +6,13 @@ import type {
 import { isMatchComplete, isValidScore } from "./scoring.ts";
 
 export const tournamentFormats = ["americano", "mexicano"] as const;
-export const playerCounts = [4, 8, 12];
+export const playerCounts = [4, 5, 8, 12];
 export const maxPlayers = Math.max(...playerCounts);
 
-// Each complete partner rotation has N/4 matches. Finish its batches before
-// starting the next rotation; this favors an understandable schedule over packing.
+// Five-player rounds pair one match with a different bye; other sizes use full
+// partner rotations with N/4 matches, batched before the next rotation starts.
 export function americanoRounds(players: number, courts: number): number {
+  if (players === 5) return 5;
   return (players - 1) * Math.ceil(players / 4 / courts);
 }
 

@@ -104,6 +104,54 @@ test("scores update status, standings and block finishing until complete", () =>
   ]);
 });
 
+test("five-player byes do not count as matches or award automatic standings", () => {
+  let t = build(5, 1);
+  assert.equal(t.schedule.length, 5);
+  assert.equal(pendingMatches(t), 5);
+  assert.ok(
+    computeStandings(t).every((row) => row.points === 0 && row.wins === 0),
+  );
+
+  const firstMatch = t.schedule[0].matches[0];
+  const restingPlayer = t.players.find(
+    ({ id }) =>
+      ![...firstMatch.teamA, ...firstMatch.teamB].includes(id),
+  );
+  assert.ok(restingPlayer);
+  const firstScore = recordScore(t, firstMatch.id, 10, 6);
+  assert.ok(firstScore.ok);
+  t = firstScore.tournament;
+  const restingStanding = computeStandings(t).find(
+    ({ playerId }) => playerId === restingPlayer.id,
+  );
+  assert.deepEqual(
+    { points: restingStanding?.points, wins: restingStanding?.wins },
+    { points: 0, wins: 0 },
+  );
+
+  for (const round of t.schedule.slice(1)) {
+    const scored = recordScore(t, round.matches[0].id, 8, 8);
+    assert.ok(scored.ok);
+    t = scored.tournament;
+  }
+  assert.equal(pendingMatches(t), 0);
+  const standings = new Map(
+    computeStandings(t).map((row) => [row.playerId, row]),
+  );
+  for (const player of t.players) {
+    const standing = standings.get(player.id)!;
+    const points = firstMatch.teamA.includes(player.id)
+      ? 34
+      : firstMatch.teamB.includes(player.id)
+        ? 30
+        : 32;
+    assert.equal(standing.points, points);
+    assert.equal(standing.wins, firstMatch.teamA.includes(player.id) ? 1 : 0);
+  }
+  assert.equal([...standings.values()].reduce((sum, row) => sum + row.points, 0), 160);
+  assert.ok(canFinishTournament(t));
+});
+
 test("mexicano generates one round at a time from results", () => {
   let t = build(8, 2, "mexicano", 2);
   assert.equal(t.schedule.length, 1);

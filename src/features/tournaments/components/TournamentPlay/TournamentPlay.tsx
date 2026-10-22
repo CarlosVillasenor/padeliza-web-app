@@ -76,6 +76,13 @@ export default function TournamentPlay({ id }: { id: string }) {
   const round =
     tournament.schedule.find((r) => r.number === roundNumber) ??
     tournament.schedule[0];
+  const playersInRound = new Set(
+    round.matches.flatMap((match) => [...match.teamA, ...match.teamB]),
+  );
+  const restingPlayers =
+    tournament.format === "americano"
+      ? tournament.players.filter((player) => !playersInRound.has(player.id))
+      : [];
   const editable = canEditScores(tournament, round.number);
   const names = new Map(tournament.players.map((p) => [p.id, p.name]));
   const pickerMatch = picker
@@ -127,6 +134,11 @@ export default function TournamentPlay({ id }: { id: string }) {
         onSelect={setSelectedRound}
       />
       <h2 className={styles.roundTitle}>{copy.round(round.number)}</h2>
+      {restingPlayers.length > 0 && (
+        <p className={styles.bye}>
+          {copy.restingPlayers(restingPlayers.map((player) => player.name))}
+        </p>
+      )}
       <ul className={styles.matches}>
         {round.matches.map((match) => (
           <li key={match.id}>

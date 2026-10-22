@@ -95,7 +95,10 @@ export default function TournamentWizard() {
     event.preventDefault();
     if (step === "players") {
       if (playerName.trim()) return setError(copy.stepErrors.pendingPlayerName);
-      if (!playerCounts.includes(players.length))
+      if (
+        !playerCounts.includes(players.length) ||
+        (format === "mexicano" && players.length % 4 !== 0)
+      )
         return setError(copy.stepErrors.unsupportedPlayerCount);
       setCourts(
         format === "mexicano"

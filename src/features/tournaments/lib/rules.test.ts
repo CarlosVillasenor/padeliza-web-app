@@ -20,10 +20,24 @@ test("complete rotations and sequential court batches", () => {
     assert.equal(americanoRounds(n, n / 4), n - 1);
     assert.equal(americanoRounds(n, 1), (n * (n - 1)) / 4);
   }
+  assert.equal(americanoRounds(5, 1), 5);
   assert.equal(americanoRounds(12, 2), 22);
 });
 test("valid input and unsupported or inconsistent configurations", () => {
   assert.equal(validateTournament(input), null);
+  const five: TournamentInput = {
+    ...input,
+    players: Array.from({ length: 5 }, (_, i) => ({
+      id: `five-${i}`,
+      name: `Jugador ${i}`,
+    })),
+    rounds: americanoRounds(5, 1),
+  };
+  assert.equal(validateTournament(five), null);
+  assert.equal(
+    validateTournament({ ...five, format: "mexicano" }),
+    "mexicanoCourts",
+  );
   const sixteen = Array.from({ length: 16 }, (_, i) => ({
     id: String(i),
     name: `J${i}`,

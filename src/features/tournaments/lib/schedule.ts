@@ -38,6 +38,94 @@ function createMatch(
 type IndexPair = readonly [number, number];
 type IndexMatch = readonly [IndexPair, IndexPair];
 
+function fivePlayerPairings(): IndexMatch[] {
+  const playerCount = 5;
+  const allPairs = new Set<string>();
+  for (let a = 0; a < playerCount; a++)
+    for (let b = a + 1; b < playerCount; b++) allPairs.add(`${a}|${b}`);
+
+  const candidatesByBye = Array.from({ length: playerCount }, (_, bye) => {
+    const available = Array.from(
+      { length: playerCount },
+      (_, player) => player,
+    ).filter((player) => player !== bye);
+    const candidates: IndexMatch[] = [];
+    for (let i = 0; i < available.length; i++)
+      for (let j = i + 1; j < available.length; j++) {
+        const teamA: IndexPair = [available[i], available[j]];
+        const remaining = available.filter(
+          (player) => player !== teamA[0] && player !== teamA[1],
+        );
+        if (teamA[0] > remaining[0]) continue;
+        candidates.push([teamA, [remaining[0], remaining[1]]]);
+      }
+    return candidates;
+  });
+  // There are only three team splits for each bye, so exhaustive search is small.
+  const partners = new Set<string>();
+  const opponents = new Map<string, number>();
+
+  function search(bye: number, chosen: IndexMatch[]): IndexMatch[] | null {
+    if (bye === playerCount) {
+      return partners.size === allPairs.size &&
+        opponents.size === allPairs.size &&
+        [...opponents.values()].every((count) => count === 2)
+        ? chosen
+        : null;
+    }
+
+    for (const matchup of candidatesByBye[bye]) {
+      const [teamA, teamB] = matchup;
+      const teamPairs = [
+        `${teamA[0]}|${teamA[1]}`,
+        `${teamB[0]}|${teamB[1]}`,
+      ];
+      if (teamPairs.some((pair) => partners.has(pair))) continue;
+
+      const opponentPairs = teamA.flatMap((a) =>
+        teamB.map((b) => `${Math.min(a, b)}|${Math.max(a, b)}`),
+      );
+      if (opponentPairs.some((pair) => (opponents.get(pair) ?? 0) >= 2))
+        continue;
+
+      teamPairs.forEach((pair) => partners.add(pair));
+      opponentPairs.forEach((pair) =>
+        opponents.set(pair, (opponents.get(pair) ?? 0) + 1),
+      );
+      const result = search(bye + 1, [...chosen, matchup]);
+      if (result) return result;
+      teamPairs.forEach((pair) => partners.delete(pair));
+      opponentPairs.forEach((pair) => {
+        const count = opponents.get(pair)! - 1;
+        if (count === 0) opponents.delete(pair);
+        else opponents.set(pair, count);
+      });
+    }
+    return null;
+  }
+
+  const pairings = search(0, []);
+  if (!pairings) throw new Error("Unable to generate a five-player Americano");
+  return pairings;
+}
+
+function generateFivePlayerAmericano(ids: readonly string[]): Round[] {
+  return fivePlayerPairings().map(([teamA, teamB], index) => {
+    const number = index + 1;
+    return {
+      number,
+      matches: [
+        createMatch(
+          number,
+          1,
+          [ids[teamA[0]], ids[teamA[1]]],
+          [ids[teamB[0]], ids[teamB[1]]],
+        ),
+      ],
+    };
+  });
+}
+
 // Cyclic whist tournament (Moore): for N = q + 1 players with q prime and q % 4 == 3,
 // players 0..q-1 plus a fixed player `q` play q rotations. Rotation r is the base
 // rotation with every player except the fixed one shifted by r (mod q). Over the
@@ -59,6 +147,7 @@ const baseRotations: Readonly<Record<number, readonly IndexMatch[]>> = {
 // Play each rotation's matches in batches of `courts`.
 function generateAmericano(input: TournamentInput): Round[] {
   const ids = input.players.map((p) => p.id);
+  if (ids.length === 5) return generateFivePlayerAmericano(ids);
   const base = baseRotations[ids.length];
   if (!base) throw new Error(`Unsupported Americano size: ${ids.length}`);
   const cycle = ids.length - 1;
