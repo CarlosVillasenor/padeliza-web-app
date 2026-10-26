@@ -84,6 +84,14 @@ export default function TournamentPlay({ id }: { id: string }) {
   const canFinish = canFinishTournament(tournament);
   const pending = pendingMatches(tournament);
   const missingRounds = ungeneratedRounds(tournament);
+  const playingIds = new Set(
+    round.matches.flatMap((match) => [...match.teamA, ...match.teamB]),
+  );
+  const roundByes =
+    round.byes ??
+    tournament.players
+      .filter((player) => !playingIds.has(player.id))
+      .map((player) => player.id);
   const hint = pending
     ? copy.pendingMatches(pending)
     : missingRounds
@@ -127,6 +135,11 @@ export default function TournamentPlay({ id }: { id: string }) {
         onSelect={setSelectedRound}
       />
       <h2 className={styles.roundTitle}>{copy.round(round.number)}</h2>
+      {tournament.format === "americano" && roundByes.length > 0 && (
+        <p className={styles.hint}>
+          {copy.byes(roundByes.map((id) => names.get(id) ?? id).join(", "))}
+        </p>
+      )}
       <ul className={styles.matches}>
         {round.matches.map((match) => (
           <li key={match.id}>

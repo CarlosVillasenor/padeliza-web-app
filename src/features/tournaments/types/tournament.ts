@@ -19,7 +19,12 @@ export type Match = {
   scoreA: number | null;
   scoreB: number | null;
 };
-export type Round = { number: number; matches: Match[] };
+export type Round = {
+  number: number;
+  matches: Match[];
+  // Optional so version-2 tournaments created before byes were persisted still load.
+  byes?: string[];
+};
 export type Tournament = TournamentInput & {
   id: string;
   createdAt: string;

@@ -38,26 +38,30 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-## Creación de torneos (primera versión)
+## Reglas de torneos
 
 Abre `/tournaments/new` o pulsa **Crear torneo** en el inicio. El formulario mantiene
 el borrador al volver entre pasos; salir o recargar descarta ese borrador. Al
-confirmar, guarda un torneo en estado `scheduled` y vuelve al listado. La captura
-de resultados y la generación de emparejamientos quedan para la siguiente entrega.
+confirmar, guarda el torneo en estado `scheduled`. Los partidos se capturan desde
+la página del torneo y los resultados alimentan la clasificación.
 
-- Americano: 4, 8 o 12 jugadores; de 1 a N/4 pistas. Una rotación contiene N/4
-  partidos y cada jugador tendrá N−1 parejas distintas. Para calcular los turnos,
-  se completa cada rotación en lotes de hasta C pistas antes de pasar a la siguiente:
-  `(N−1) × ceil((N/4)/C)`. No se promete el calendario más corto posible; por ejemplo,
-  12 jugadores y 2 pistas dan 22 turnos, con el último lote de cada rotación parcial.
-  El generador (`lib/schedule.ts`) usa un torneo de whist cíclico: cada pareja de
-  jugadores es compañera exactamente una vez y rival exactamente dos veces. Solo
-  existe para 4, 8 y 12 jugadores (N−1 primo, N−1 ≡ 3 mod 4), por eso ese es el máximo.
-- Mexicano: cuatro jugadores por pista, entre 1 y 4 pistas. Rondas elegidas por el
-  organizador (1–100). La futura generación usará una primera ronda aleatoria y
-  después clasificación en grupos de cuatro (1+4 contra 2+3). Los desempates de
-  clasificación deberán acordarse al implementar resultados.
-- Jugadores: el máximo es 12 (4, 8 o 12).
+- Americano: de 4 a 20 jugadores; entre 1 y `min(4, floor(N/4))` pistas. Los
+  tamaños 4, 8 y 12 conservan la rotación cíclica existente: cada pareja de
+  jugadores es compañera exactamente una vez y rival exactamente dos veces. Con
+  otros tamaños, el calendario completa N rotaciones en lotes de hasta C pistas:
+  `N × ceil(floor(N/4)/C)` turnos. Cada jugador juega exactamente `4 × floor(N/4)`
+  partidos y descansa el mismo número de turnos; ningún grupo de cuatro se repite.
+  El generador favorece parejas y rivales distintos, pero no garantiza una
+  rotación perfecta de parejas u oponentes para tamaños no clásicos. Con una pista,
+  el máximo de 20 jugadores produce 100 turnos.
+- Los descansos se guardan como IDs de participantes y se muestran en cada ronda.
+  Un descanso no es un partido, no se puede puntuar y no suma puntos a la
+  clasificación. Los descansos son opcionales en el formato persistido para que
+  los torneos v2 guardados antes de este cambio sigan siendo compatibles.
+- Mexicano: cuatro jugadores por pista, entre 1 y 4 pistas; tamaños de 4, 8, 12
+  o 16 jugadores. El organizador elige entre 1 y 100 rondas.
+- Jugadores: Americano admite de 4 a 20 jugadores; Mexicano requiere grupos exactos
+  de cuatro y admite hasta 16.
 - Puntuación: suma fija por partido, entre 1 y 100, incluidos empates cuando proceda.
   Las opciones son 8, 16, 24 y 32. Los puntos no determinan las rondas.
 
@@ -84,8 +88,9 @@ implica que el sitio completo funcione sin conexión.
 Con Node 24 (`nvm use`):
 
 ```bash
-node --test src/features/tournaments/lib/rules.test.ts
+npm test
 npm run lint
+node_modules/.bin/tsc --noEmit
 npm run build
 ```
 

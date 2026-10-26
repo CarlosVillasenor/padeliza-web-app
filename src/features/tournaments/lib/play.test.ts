@@ -104,6 +104,79 @@ test("scores update status, standings and block finishing until complete", () =>
   ]);
 });
 
+test("Americano byes are not matches and never earn standings points", () => {
+  for (let playerCount = 4; playerCount <= 20; playerCount++) {
+    let tournament = build(
+      playerCount,
+      Math.min(4, Math.floor(playerCount / 4)),
+    );
+    const expected = new Map(
+      tournament.players.map((player) => [player.id, { points: 0, wins: 0 }]),
+    );
+    const matchCount = tournament.schedule.reduce(
+      (total, round) => total + round.matches.length,
+      0,
+    );
+    assert.equal(pendingMatches(tournament), matchCount);
+
+    for (const round of tournament.schedule)
+      for (const match of round.matches) {
+        const result = recordScore(tournament, match.id, 10, 6);
+        assert.ok(result.ok);
+        tournament = result.tournament;
+        for (const id of match.teamA) {
+          const row = expected.get(id)!;
+          row.points += 10;
+          row.wins += 1;
+        }
+        for (const id of match.teamB) expected.get(id)!.points += 6;
+      }
+
+    assert.equal(pendingMatches(tournament), 0);
+    assert.ok(canFinishTournament(tournament));
+    const standings = computeStandings(tournament);
+    for (const row of standings)
+      assert.deepEqual(
+        { points: row.points, wins: row.wins },
+        expected.get(row.playerId),
+      );
+    const rankedExpected = tournament.players
+      .map((player) => ({
+        playerId: player.id,
+        ...expected.get(player.id)!,
+        name: player.name,
+      }))
+      .sort(
+        (a, b) =>
+          b.points - a.points ||
+          b.wins - a.wins ||
+          a.name.localeCompare(b.name, "es"),
+      );
+    assert.deepEqual(
+      standings.map((row) => ({
+        playerId: row.playerId,
+        points: row.points,
+        wins: row.wins,
+        position: row.position,
+      })),
+      rankedExpected.map((row) => ({
+        playerId: row.playerId,
+        points: row.points,
+        wins: row.wins,
+        position:
+          rankedExpected.findIndex(
+            (candidate) =>
+              candidate.points === row.points && candidate.wins === row.wins,
+          ) + 1,
+      })),
+    );
+
+    const finished = completeTournament(tournament);
+    assert.ok(finished.ok);
+    assert.equal(finished.tournament.status, "completed");
+  }
+});
+
 test("mexicano generates one round at a time from results", () => {
   let t = build(8, 2, "mexicano", 2);
   assert.equal(t.schedule.length, 1);

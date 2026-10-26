@@ -1,4 +1,8 @@
 import { messages } from "@/shared/i18n";
+import {
+  americanoMatchesPerPlayer,
+  hasPerfectAmericanoRotation,
+} from "../../../../lib/rules";
 import type { TournamentInput } from "../../../../types/tournament";
 import shared from "../../shared.module.css";
 import styles from "./ReviewStep.module.css";
@@ -27,15 +31,25 @@ export default function ReviewStep({ input }: { input: TournamentInput }) {
         <dd className={styles.value}>{rounds}</dd>
         <dt className={styles.term}>{copy.matchesPerPlayer}</dt>
         <dd className={styles.value}>
-          {format === "americano" ? players.length - 1 : rounds}
+          {format === "americano"
+            ? americanoMatchesPerPlayer(players.length)
+            : rounds}
         </dd>
       </dl>
       {format === "americano" && (
-        <p className={shared.intro}>
-          {courts * 4 < players.length
-            ? copy.americanoWithRests
-            : copy.americanoNoRests}
-        </p>
+        <>
+          {!hasPerfectAmericanoRotation(players.length) && (
+            <p className={shared.intro}>{copy.americanoBalanced}</p>
+          )}
+          {hasPerfectAmericanoRotation(players.length) &&
+            courts * 4 < players.length && (
+              <p className={shared.intro}>{copy.americanoWithRests}</p>
+            )}
+          {courts * 4 >= players.length &&
+            hasPerfectAmericanoRotation(players.length) && (
+              <p className={shared.intro}>{copy.americanoNoRests}</p>
+            )}
+        </>
       )}
       <p className={shared.intro}>{copy.saveNotice}</p>
     </>

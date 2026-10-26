@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 import Button from "@/shared/components/Button/Button";
 import { messages } from "@/shared/i18n";
 import {
+  playerCountError,
   americanoRounds,
-  playerCounts,
   validateTournament,
 } from "../../lib/rules";
 import type {
@@ -95,12 +95,12 @@ export default function TournamentWizard() {
     event.preventDefault();
     if (step === "players") {
       if (playerName.trim()) return setError(copy.stepErrors.pendingPlayerName);
-      if (!playerCounts.includes(players.length))
-        return setError(copy.stepErrors.unsupportedPlayerCount);
+      const countError = playerCountError(players.length, format);
+      if (countError) return setError(errors[countError]);
       setCourts(
         format === "mexicano"
           ? players.length / 4
-          : Math.min(courts, players.length / 4),
+          : Math.min(courts, Math.floor(players.length / 4)),
       );
     }
     if (

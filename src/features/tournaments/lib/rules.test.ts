@@ -1,6 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { americanoRounds, validateTournament } from "./rules.ts";
+import {
+  americanoRounds,
+  maxPlayers,
+  maxAmericanoRounds,
+  validateTournament,
+} from "./rules.ts";
 import { createInitialSchedule } from "./schedule.ts";
 import { decodeTournaments, encodeTournaments } from "./storage.ts";
 import type { TournamentInput, Tournament } from "../types/tournament.ts";
@@ -16,11 +21,14 @@ const input: TournamentInput = {
   rounds: 3,
 };
 test("complete rotations and sequential court batches", () => {
-  for (const n of [4, 8, 12, 16]) {
+  for (const n of [4, 8, 12]) {
     assert.equal(americanoRounds(n, n / 4), n - 1);
     assert.equal(americanoRounds(n, 1), (n * (n - 1)) / 4);
   }
   assert.equal(americanoRounds(12, 2), 22);
+  assert.equal(americanoRounds(5, 1), 5);
+  assert.equal(americanoRounds(9, 2), 9);
+  assert.equal(americanoRounds(maxPlayers, 1), maxAmericanoRounds);
 });
 test("valid input and unsupported or inconsistent configurations", () => {
   assert.equal(validateTournament(input), null);
@@ -29,7 +37,42 @@ test("valid input and unsupported or inconsistent configurations", () => {
     name: `J${i}`,
   }));
   assert.equal(
-    validateTournament({ ...input, players: sixteen, courts: 4 }),
+    validateTournament({
+      ...input,
+      players: sixteen,
+      courts: 4,
+      rounds: americanoRounds(16, 4),
+    }),
+    null,
+  );
+  assert.equal(
+    validateTournament({
+      ...input,
+      players: Array.from({ length: maxPlayers + 1 }, (_, i) => ({
+        id: String(i),
+        name: `J${i}`,
+      })),
+    }),
+    "playerCount",
+  );
+  const maxSize = Array.from({ length: maxPlayers }, (_, i) => ({
+    id: String(i),
+    name: `J${i}`,
+  }));
+  assert.equal(
+    validateTournament({
+      ...input,
+      players: maxSize,
+      courts: 4,
+      rounds: americanoRounds(maxPlayers, 4),
+    }),
+    null,
+  );
+  assert.equal(
+    validateTournament({
+      ...input,
+      players: input.players.slice(0, 3),
+    }),
     "playerCount",
   );
   for (const change of [
@@ -72,6 +115,15 @@ test("valid input and unsupported or inconsistent configurations", () => {
     }),
     null,
   );
+  assert.equal(
+    validateTournament({
+      ...input,
+      format: "mexicano",
+      players: [...eight, { id: "8", name: "J8" }],
+      courts: 2,
+    }),
+    "mexicanoCourts",
+  );
 });
 test("storage round trip, empty, corrupted, unsupported versions and duplicates", () => {
   const tournament: Tournament = {
@@ -85,6 +137,17 @@ test("storage round trip, empty, corrupted, unsupported versions and duplicates"
   assert.deepEqual(decodeTournaments(encodeTournaments([tournament])), [
     tournament,
   ]);
+  const legacyTournament: Tournament = {
+    ...tournament,
+    schedule: tournament.schedule.map(({ number, matches }) => ({
+      number,
+      matches,
+    })),
+  };
+  assert.deepEqual(
+    decodeTournaments(encodeTournaments([legacyTournament])),
+    [legacyTournament],
+  );
   for (const raw of [
     "broken",
     "{}",
