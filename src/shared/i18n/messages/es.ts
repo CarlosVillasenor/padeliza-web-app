@@ -43,7 +43,7 @@ export const es = {
     errors: {
       name: "Escribe un nombre de hasta 80 caracteres.",
       format: "Selecciona un tipo de torneo válido.",
-      playerCount: "Agrega 4, 8 o 12 jugadores.",
+      playerCount: "El torneo admite entre 4 y 20 jugadores.",
       playerName: "Cada jugador necesita un nombre de hasta 50 caracteres.",
       duplicatePlayerName: "Los nombres de los jugadores deben ser distintos.",
       duplicatePlayerId: "Los identificadores de jugadores deben ser únicos.",
@@ -104,6 +104,8 @@ export const es = {
       pickerOption: (value: number) => `${value} puntos`,
       pickerClose: "Cerrar",
       and: "y",
+      byes: (names: string) =>
+        `Descansan: ${names}. El descanso no suma puntos.`,
       generateRound: (number: number) => `Generar ronda ${number}`,
       finish: "Finalizar",
       pendingMatches: (count: number) =>
@@ -144,7 +146,8 @@ export const es = {
         legend: "Modalidad",
       },
       players: {
-        intro: "Agrega 4, 8 o 12 jugadores. Cada nombre debe ser distinto.",
+        intro:
+          "Americano admite de 4 a 20 jugadores. Mexicano requiere 4, 8, 12 o 16. Cada nombre debe ser distinto.",
         inputLabel: "Añadir jugador",
         addButton: "Añadir jugador",
         added: (count: number) => `${count} jugadores agregados`,
@@ -189,18 +192,19 @@ export const es = {
           "Una pareja distinta en cada partido. Habrá descansos: completamos cada rotación por turnos antes de la siguiente.",
         americanoNoRests:
           "Una pareja distinta en cada partido. Todos juegan en cada ronda.",
+        americanoBalanced:
+          "Las apariciones y los descansos se reparten de forma equilibrada. No se repite el mismo grupo de cuatro, aunque pueden repetirse parejas o rivales.",
         saveNotice:
           "El torneo se guardará en este navegador. Al crearlo podrás capturar los resultados de cada ronda.",
       },
       // Step-level input problems caught before the domain rules run.
       stepErrors: {
         playerNameRequired: "Escribe el nombre del jugador.",
-        maxPlayers: "Puedes agregar hasta 12 jugadores.",
+        maxPlayers: "Puedes agregar hasta 20 jugadores.",
         duplicatePlayer:
           "Ese jugador ya está en la lista. Usa un nombre distinto para identificarlo.",
         pendingPlayerName:
           "Presiona + para agregar el nombre pendiente o borra el campo antes de continuar.",
-        unsupportedPlayerCount: "Esta versión admite 4, 8 o 12 jugadores.",
         pointsRange: "Escribe entre 1 y 100 puntos.",
         roundsRange: "Escribe entre 1 y 100 rondas.",
         nameRequired: "Escribe el nombre del torneo.",
