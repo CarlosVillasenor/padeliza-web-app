@@ -4,6 +4,8 @@ export const es = {
   common: {
     appName: "Padeliza",
     retry: "Volver a intentar",
+    errorModalTitle: "Ha ocurrido un error",
+    returnHome: "Cerrar y volver al inicio",
   },
   metadata: {
     title: "Padeliza", // Browser/SEO title; may differ from `common.appName`.
