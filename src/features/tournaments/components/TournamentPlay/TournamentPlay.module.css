@@ -85,9 +85,6 @@
   border-radius: 0.5rem;
   padding: 1rem;
 }
-.homeLink {
-  text-decoration: underline;
-}
 .shell :is(button, a):focus-visible {
   outline: 3px solid #6ba928;
   outline-offset: 3px;

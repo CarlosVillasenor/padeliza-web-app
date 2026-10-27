@@ -31,6 +31,10 @@ export default function ErrorModal({ message }: ErrorModalProps) {
       aria-modal="true"
       aria-labelledby={titleId}
       aria-describedby={messageId}
+      onCancel={(event) => {
+        event.preventDefault();
+        dialogRef.current?.close();
+      }}
       onClose={() => router.replace("/")}
     >
       <div className={styles.content}>

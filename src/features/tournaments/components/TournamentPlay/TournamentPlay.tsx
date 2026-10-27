@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Button from "@/shared/components/Button/Button";
+import ErrorModal from "@/shared/components/ErrorModal/ErrorModal";
 import { messages } from "@/shared/i18n";
 import {
   canEditScores,
@@ -61,14 +62,7 @@ export default function TournamentPlay({ id }: { id: string }) {
       </main>
     );
   if (!tournament)
-    return (
-      <main className={styles.shell}>
-        <p role="alert">{copy.notFound}</p>
-        <Link className={styles.homeLink} href="/">
-          {copy.backToTournaments}
-        </Link>
-      </main>
-    );
+    return <ErrorModal message={copy.notFound} />;
   if (tournament.status === "completed")
     return <ResultsStep tournament={tournament} />;
 
