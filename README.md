@@ -81,10 +81,32 @@ implica que el sitio completo funcione sin conexión.
 
 ### Verificación
 
-Con Node 24 (`nvm use`):
+Con Node 24 (`nvm use`), ejecuta todas las pruebas una vez:
 
 ```bash
-node --test src/features/tournaments/lib/rules.test.ts
+npm run test:run
+```
+
+Durante el desarrollo, usa el modo watch:
+
+```bash
+npm test
+```
+
+Para abrir el dashboard interactivo de Vitest:
+
+```bash
+npm run test:ui
+```
+
+Vitest imprime la URL del dashboard en la terminal al iniciarse. Abre esa URL
+exacta en el navegador; el puerto puede variar. El servidor de pruebas se enlaza
+únicamente a `127.0.0.1`, por lo que no se expone a la red local ni a Internet.
+
+Las pruebas usan el entorno Node.js y se descubren en `src/**/*.test.ts`.
+También puedes validar la aplicación con:
+
+```bash
 npm run lint
 npm run build
 ```
