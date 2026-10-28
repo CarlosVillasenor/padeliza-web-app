@@ -89,7 +89,11 @@ export default function TournamentList({
         </ul>
       )}
       {actionError && <p role="alert">{actionError}</p>}
-      <Link className={styles.createLink} href="/tournaments/new">
+      <Link
+        className={styles.createLink}
+        href="/tournaments/new"
+        data-umami-event="tournament-create-started"
+      >
         {copy.create}
       </Link>
     </>
